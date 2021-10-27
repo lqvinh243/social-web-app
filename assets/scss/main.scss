@@ -1,0 +1,43 @@
+@import '~/assets/scss/fontawesome/font-awesome.scss';
+@import '~/assets/scss/general/mixin.scss';
+@import '~/assets/scss/general/variables.scss';
+@import '~/assets/scss/themes/default.scss';
+@import '~/assets/scss/components/loading.scss';
+
+// @import '~/assets/scss/themes/white.scss';
+// @import '~/assets/scss/themes/blue.scss';
+.page {
+    &-controls {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        h1 {
+            font-size: 1.6rem;
+            line-height: 2.4rem;
+            font-weight: 400;
+        }
+        h2 {
+            font-size: 2.6rem;
+            line-height: 3.9rem;
+            font-weight: 500;
+            color: $color-second;
+            margin-bottom: 15px;
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.v-list-item__icon {
+    margin: 6px 16px 6px 0 !important;
+}
+
+.v-list-item__content {
+    margin: 6px 16px 6px 0 !important;
+}

@@ -1,0 +1,93 @@
+//----Color
+$color-primary: $white;
+$color-second: $blue-lighter;
+$color-second-hover:$gray-darker;
+$color-third: $gray-darker;
+$color-fourth: $blue-darker;
+$color-fifth: $gray;
+$color-sixth: $blue-dark;
+$color-seventh: $green;
+$color-eighth: $black-light;
+$color-ninth: $blue-light;
+$color-tenth: $gray-light;
+$color-eleventh: $red;
+$color-twelfth: $green-darker;
+//----Font
+$font-primary: 'GeneralGrotesque-Demi';
+$font-second: 'GeneralGrotesque-Demi';
+$font-third: 'GeneralGrotesque-Demi';
+$font-fourth: 'GeneralGrotesque-Demi';
+$font-fifth: 'GeneralGrotesque-Demi';
+
+/*******************************
+Color
+********************************/
+$black: #000000;
+$white: #FFFFFF;
+$cloud-burst: #1C273F;
+$cloud-burst-hover: darken($cloud-burst, 7);
+$gray: #828282;
+$dove-gray: #616161;
+$boulder: #7D7D7D;
+$crusta: #FF872B;
+$downy: #70C9C5;
+$downy-hover: darken($downy , 10);
+$alto-100: #D8D8D8;
+$alto-200: #CECECE;
+$pampas: #f7f4f2;
+$pampas-2: #F8F6F4;
+
+/*******************************
+Font size
+********************************/
+// $font-size-smallest: 7px;
+$font-size-smaller: 1rem;
+$font-size-small: 1.2rem;
+$font-size-normal-1: 1.4rem;
+$font-size-normal-2: 1.5rem;
+$font-size-primary: 1.6rem;
+$font-size-second: 1.8rem;
+$font-size-big: 2rem;
+$font-size-bigger: 2.4rem;
+$font-size-biggest: 2.6rem;
+
+/*******************************
+Font Family
+********************************/
+$font-primary: 'Aeonik', sans-serif;
+/*******************************
+width, height, spacing
+********************************/
+$height-header: 82px;
+
+$height-footer: 130px;
+
+$spacing-bigger: 40px;
+
+
+$bd-radius-sm: 5px;
+$bd-radius-md: 7px;
+$bd-radius-big: 13px;
+$bd-radius-bigger: 18.5px;
+
+$transition: all 0.3s ease;
+
+$cubic-bezier: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+/*******************************
+Buttton
+********************************/
+// $btn-padding-y-sm:            $input-btn-padding-y-sm;
+// $btn-padding-x-sm:            $input-btn-padding-x-sm;
+// $btn-font-size-sm:            $input-btn-font-size-sm;
+
+// $btn-padding-y-lg:            $input-btn-padding-y-lg;
+// $btn-padding-x-lg:            $input-btn-padding-x-lg;
+// $btn-font-size-lg:            $input-btn-font-size-lg;
+
+
+// .theme-default {
+//     // @import '~/assets/scss/general/general.scss';
+//     // @import '~/assets/scss/components/header.scss';
+//     // @import '~/assets/scss/components/box-left.scss';
+// }

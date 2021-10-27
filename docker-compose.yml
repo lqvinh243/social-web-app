@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+    web-app:
+        image: ${PROJECT_ID}-img
+        container_name: ${PROJECT_ID}
+        build: .
+        ports:
+            - 127.0.0.1:${PORT}:${PORT}
+        networks:
+            - webnet
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '8m'
+                max-file: '10'
+        restart: always
+networks:
+    webnet:
+        name: webnet
+        driver: bridge

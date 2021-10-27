@@ -1,0 +1,111 @@
+.page {
+    &-controls {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        h1 {
+            font-size: 1.6rem;
+            line-height: 2.4rem;
+            font-weight: 400;
+        }
+        h2 {
+            font-size: 2.6rem;
+            line-height: 3.9rem;
+            font-weight: 500;
+            color: $color-second;
+            margin-bottom: 15px;
+        }
+    }
+
+    // style page forgot password
+    &-forgot-password {
+        .email-forgot-password__input {
+            border-radius: 20px;
+            border: 1px solid $color-second;
+            padding: 15px;
+            &:focus {
+                border-color: $color-second-hover;
+            }
+        }
+    }
+    @media screen and (max-width: 567px) {
+        &-controls {
+            h2 {
+                font-size: 2rem;
+                line-height: 3rem;
+            }
+        }
+    }
+}
+.login {
+    &__header {
+        .logo { //can be changed or removed
+            width: 170px;
+        }
+        a + h1 {
+            padding-top: 20px;
+        }
+    }
+    &__content {
+        padding: 30px 0;
+        ._form {
+            &-control {
+                font-size: $font-size-normal-2;
+                font-weight: 500;
+            }
+        }
+    }
+    &__box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        background-color: $white;
+        max-width: 530px;
+        width: 100%;
+        min-height: 350px;
+        border-radius: $bd-radius-big;
+        padding: 70px;
+    }
+    &__footer {
+        .action {
+            padding-bottom: 20px;
+            a {
+                text-decoration: underline;
+                &:hover {
+                    transition: $transition;
+                    text-decoration: none;
+                }
+            }
+            span, a {
+                font-size: 1.3rem;
+                line-height: 1.5rem;
+            }
+
+        }
+    }
+    
+
+    // style responsive
+    @media screen and (max-width: 768px) {
+        &__box {
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+        }
+    }
+    @media screen and (max-width: 567px) {
+        &__box {
+            max-width: 90%;
+        }
+        &__footer {
+            .action {
+                padding-bottom: 10px;
+            }
+        }
+    }
+}
