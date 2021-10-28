@@ -2,7 +2,7 @@
     <div class="theme-default">
         <div class="main-content">
             <div data-app>
-                <menu-header @emitDrawer="getDrawer" />
+                <Menu />
                 <div class="col-right" style="overflow: auto;height:calc(100vh - 48px)">
                     <nuxt />
                 </div>
@@ -13,11 +13,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import MenuHeader from '~/components/MenuHeader.vue';
+import Menu from '~/components/Menu.vue';
 import { connectWS } from '~/utils/socket';
 
 export default Vue.extend({
-    components: { MenuHeader },
+    components: { Menu },
 
     data: () => ({
         drawer: null,

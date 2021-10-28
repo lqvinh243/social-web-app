@@ -10,7 +10,13 @@ export default {
             { hid: 'description', name: 'description', content: process.env.PROJECT_NAME }
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+            { href: 'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css' },
+            { href: 'https://fonts.googleapis.com/icon?family=Material+Icons', rel: 'stylesheet' },
+            { href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css', rel: 'stylesheet' }
+        ],
+        script: [
+            { src: 'https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js' }
         ]
     },
 

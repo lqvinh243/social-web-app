@@ -26,7 +26,7 @@ export const actions: ActionTree<IRootState, IRootState> = {
                 const authResult = await authService.authenticate(token);
 
                 dispatch(`${authNamespace}/updateAuthentication`, { ...authResult, token });
-                dispatch(`${authNamespace}/updateProfile`, { ...authResult });
+                dispatch(`${authNamespace}/updateProfile`, { ...authResult.user });
             }
             catch (err) {
                 res.setHeader('set-cookie', 'token=; max-age=0');

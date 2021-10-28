@@ -4,7 +4,7 @@ import { initializeAxios } from '~/utils/api';
 const plugin: Plugin = ({ $axios, redirect, store }) => {
     $axios.onRequest(config => {
         if (store.state.auth && store.state.auth.accessToken)
-            config.headers.common.authorization = 'Bearer ' + store.state.auth.accessToken;
+            config.headers.common.authorization = store.state.auth.accessToken;
     });
 
     $axios.onError(error => {

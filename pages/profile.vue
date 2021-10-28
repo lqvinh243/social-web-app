@@ -1,0 +1,133 @@
+<template>
+    <div class="profile">
+        <div class="info">
+            <div class="info_container">
+                <img
+                    :src="avatarUrl"
+                    class="supper-avatar"
+                >
+
+                <div class="info_content">
+                    <div class="info_content_title">
+                        <h2>{{ myProfile && myProfile.fullname || '' }}</h2>
+
+                        <!--btn btn-outline-info-->
+                        <button class="btn btn btn-light btn-sm" onClick="setOnEdit()">
+                            Edit Profile
+                        </button>
+
+                        <!-- {/* // : <FollowBtn user={user} /> */} -->
+                    </div>
+
+                    <div class="mt-2 follow_btn">
+                        <span class="mr-5">
+                            {{ totalPost }} Posts
+                        </span>
+                        <span class="mr-4" onClick="setShowFollowers()">
+                            {{ myProfile && myProfile.followers && myProfile.followers.length || 0 }} Followers
+                        </span>
+                        <span class="ml-4">
+                            {{ myProfile && myProfile.followers && myProfile.following.length || 0 }} Following
+                        </span>
+                    </div>
+                    <p>Address: {{ myProfile && myProfile.address || 'No address' }}</p>
+                    <p>...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile_tab">
+            <button class="active">
+                Posts
+            </button>
+            <button class="active">
+                Saved
+            </button>
+        </div>
+        <!--Grid-->
+        <div v-if="posts.length">
+            <div class="post_thumb">
+                <div v-for="post in posts" :key="post._id">
+                    <div class="post_thumb_display">
+                        <img
+                            :src="getFirstImage(post.images)"
+                            alt=""
+                            style="filter: invert(0)"
+                        >
+
+                        <div class="post_thumb_menu">
+                            <i class="far fa-heart">3</i>
+                            <i class="far fa-comment">3</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1 v-else class="text-center">
+            No post available
+        </h1>
+    </div>
+</template>
+<script lang="ts">
+import { mapGetters } from 'vuex';
+// import { meService } from '~/services/me';
+
+export default {
+    middleware: ['authentication'],
+    data() {
+        return {
+            myProfile: null as any,
+            totalPost: 0,
+            posts: []
+        };
+    },
+    computed: {
+        ...mapGetters('auth', ['profile', 'roleId']),
+        avatarUrl(): string {
+            return (this.myProfile && this.myProfile.avatar) ?? '';
+        },
+    },
+    mounted() {
+        this.$nextTick(() => {
+            this.$nuxt.$loading.start();
+            this.myProfile = { ...this.profile };
+            this.getPost();
+            this.$nuxt.$loading.finish();
+        });
+    },
+    methods: {
+        async getPost() {
+            const result = await this.$axios.$get(`/api/v1/user_posts/${this.profile._id}`);
+            if (result) {
+                this.posts = result.posts;
+                this.totalPost = result.result;
+            }
+        },
+
+        resetForm(formName: string) {
+            this.$refs[formName].resetFields();
+            this.dialogVisible = false;
+        },
+
+        handleChangeImage(e:any) {
+            if (e.target.files && e.target.files.length) {
+                const file = e.target.files[0];
+                const urlCreator = window.URL || window.webkitURL;
+                const imageUrl = urlCreator.createObjectURL(file);
+                const image :any = document.getElementById('avatar');
+                if (image)
+                    image.src = imageUrl;
+                this.avatarUpload = file;
+            }
+        },
+
+        replaceByDefault(e:any) {
+            e.target.src = require('~/assets/images/avatar-default.png');
+        },
+
+        getFirstImage(images: string[]) {
+            return images.length ? images[0] : '';
+        }
+    }
+};
+</script>
