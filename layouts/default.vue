@@ -3,16 +3,10 @@
         <div class="main-content">
             <div data-app>
                 <menu-header @emitDrawer="getDrawer" />
-                <menu-left :drawer="drawer" @emitDrawer="getDrawer">
-                    <div class="col-right" style="overflow: auto;height:calc(100vh - 48px)">
-                        <nuxt />
-                    </div>
-                </menu-left>
+                <div class="col-right" style="overflow: auto;height:calc(100vh - 48px)">
+                    <nuxt />
+                </div>
             </div>
-
-            <!-- <div class="col-right">
-                <nuxt />
-            </div> -->
         </div>
     </div>
 </template>
@@ -34,40 +28,40 @@ export default Vue.extend({
     }),
 
     mounted() {
-        const socket = connectWS(this.$config.wsUrl, 'bid', this.$store.state.auth.accessToken);
-        socket.on('connect', () => {
-            console.log('Bid channel is connected!');
-        });
+        // const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
+        // socket.on('connect', () => {
+        //     console.log('Chat channel is connected!');
+        // });
 
-        socket.on('disconnect', () => {
-            // eslint-disable-next-line no-console
-            console.log('Bid channel is disconnected!');
-        });
+        // socket.on('disconnect', () => {
+        //     // eslint-disable-next-line no-console
+        //     console.log('Bid channel is disconnected!');
+        // });
 
         // if (this.$auth.isAuthenticated()) {
-        // if (this.$auth.isAuthenticated()) {
-        //     const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
+        if (this.$auth.isAuthenticated()) {
+            const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
 
-        //     socket.on('connect', () => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('Chat channel is connected!');
-        //     });
+            socket.on('connect', () => {
+                // eslint-disable-next-line no-console
+                console.log('Chat channel is connected!');
+            });
 
-        //     socket.on('disconnect', () => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('Chat channel is disconnected!');
-        //     });
+            socket.on('disconnect', () => {
+                // eslint-disable-next-line no-console
+                console.log('Chat channel is disconnected!');
+            });
 
-        //     socket.on('connect_error', (err: Error) => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('connect_error', err);
-        //     });
+            socket.on('connect_error', (err: Error) => {
+                // eslint-disable-next-line no-console
+                console.log('connect_error', err);
+            });
 
-        //     socket.on('online_status_changed', (onlineStatus: {userId: string, isOnline: boolean}) => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('online_status', onlineStatus);
-        //     });
-        // }
+            socket.on('new_chat', (data:any) => {
+                // eslint-disable-next-line no-console
+                console.log('new chat', data);
+            });
+        }
 
         // // eslint-disable-next-line no-console
         // const socket = connectWS(this.$config.wsUrl, 'tracking');
