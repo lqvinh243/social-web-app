@@ -29,7 +29,8 @@ export const mutationType = {
     ACCESS_TOKEN: 'access_token',
     USER_ID: 'user_id',
     ROLE_ID: 'role_id',
-    PROFILE: 'profile'
+    PROFILE: 'profile',
+    AVATAR: 'avatar'
 };
 
 export const mutations: MutationTree<IAuthState> = {
@@ -44,7 +45,11 @@ export const mutations: MutationTree<IAuthState> = {
     },
     [mutationType.PROFILE]: (state, profile: IUser) => {
         state.profile = profile;
-    }
+    },
+    [mutationType.AVATAR]: (state, avatar: string) => {
+        if (state.profile)
+            state.profile.avatar = avatar;
+    },
 };
 
 export const actions: ActionTree<IAuthState, IRootState> = {
@@ -66,5 +71,9 @@ export const actions: ActionTree<IAuthState, IRootState> = {
 
         if (process.client)
             setCookie('token', '', -1);
+    },
+
+    updateAvatar({ commit }, avatar: string) {
+        commit(mutationType.AVATAR, avatar);
     }
 };

@@ -2,11 +2,17 @@
     <div class="profile">
         <div class="info">
             <div class="info_container">
-                <img
-                    :src="avatarUrl"
-                    class="supper-avatar"
-                >
-
+                <div>
+                    <div>
+                        <img
+                            :src="avatarUrl"
+                            class="supper-avatar"
+                        >
+                    </div>
+                    <el-button @click="openChangeAvatar">
+                        Change avatar
+                    </el-button>
+                </div>
                 <div class="info_content">
                     <div class="info_content_title">
                         <h2>{{ myProfile && myProfile.fullname || '' }}</h2>
@@ -67,21 +73,24 @@
             No post available
         </h1>
         <ChangeProfileModal :dialog-visible="visibleDialog" @closeDialog="closeDialog" />
+        <UploadAvatarModal :dialog-visible-avatar="visibleDialogAvatar" @closeDialogAvatar="closeDialogAvatar" />
     </div>
 </template>
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import ChangeProfileModal from '~/components/modals/ChangeProfileModal.vue';
+import UploadAvatarModal from '~/components/modals/UploadAvatarModal.vue';
 
 export default {
-    components: { ChangeProfileModal },
+    components: { ChangeProfileModal, UploadAvatarModal },
     middleware: ['authentication'],
     data() {
         return {
             myProfile: null as any,
             totalPost: 0,
             posts: [],
-            visibleDialog: false
+            visibleDialog: false,
+            visibleDialogAvatar: false
         };
     },
     computed: {
@@ -138,7 +147,18 @@ export default {
 
         closeDialog() {
             this.visibleDialog = false;
+        },
+
+        openChangeAvatar() {
+            this.visibleDialogAvatar = true;
+        },
+
+        closeDialogAvatar(url: string) {
+            this.visibleDialogAvatar = false;
+            if (url)
+                this.myProfile.avatar = url;
         }
+
     }
 };
 </script>
