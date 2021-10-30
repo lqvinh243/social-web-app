@@ -1,5 +1,6 @@
 <template>
     <div v-if="isMyMessage" class="container darker">
+        <p>You</p>
         <p>{{ item.text || '...' }}</p>
         <span class="time-left" style="font-size:10px">{{ displayTime }}</span>
         <p v-if="isSend === false" style="font-size:10px;color:red">
@@ -7,6 +8,7 @@
         </p>
     </div>
     <div v-else class="container">
+        <p>{{ displayNameRecipient }}</p>
         <p>{{ item.text || '...' }}</p>
         <span class="time-right" style="font-size:10px">{{ displayTime }}</span>
     </div>
@@ -23,6 +25,10 @@ export default Vue.extend({
         item: {
             type: Object,
             default: () => {}
+        },
+        recipient: {
+            type: Object,
+            default: () => {}
         }
     },
     data() {
@@ -35,8 +41,11 @@ export default Vue.extend({
         isMyMessage():boolean {
             return this.profile._id === this.item.sender;
         },
-        displayTime() {
+        displayTime():string {
             return moment(this.item.createdAt).fromNow();
+        },
+        displayNameRecipient(): string {
+            return this.recipient.user.fullname;
         }
     },
     watch: {

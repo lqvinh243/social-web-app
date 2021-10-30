@@ -1,7 +1,7 @@
 <template>
     <div class="w-100 ">
         <div ref="containerMessage" class="chat-area" @scroll="infiniteScroll">
-            <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" />
+            <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" :recipient="recipientInfo" />
         </div>
         <div>
             <el-row class="w-100 h-100" :gutter="8">
@@ -39,7 +39,10 @@ export default {
         page: 1,
         channelId: null,
         isScrollLoad: false,
-        scrollHeight: 0
+        scrollHeight: 0,
+        sender: null,
+        recipient: null,
+        recipientInfo: null
     }),
 
     computed: {
@@ -52,7 +55,19 @@ export default {
                 this.messages = [];
                 this.page = 1;
                 this.channelId = val._id;
-                this.isScrollLoad = false;
+                this.isScrollLoad = true;
+
+                if (this.channel.recipients[0]._id === this.profile._id) {
+                    this.sender = val.recipients[0]._id;
+                    this.recipient = val.recipients[1]._id;
+                }
+                else {
+                    this.sender = val.recipients[1]._id;
+                    this.recipient = val.recipients[0]._id;
+                }
+                console.log('change');
+
+                await this.getUser(this.recipient);
                 await this.loadMessage(this.channelId);
                 this.scrollBottom();
             },
@@ -105,6 +120,8 @@ export default {
             const el = this.$refs.containerMessage;
             this.scrollHeight = el.scrollHeight;
             this.$nuxt.$loading.start();
+            console.log(this.page);
+
             const result = await this.$axios.$get(`/api/v1/message/${channelId}?page=${this.page}`);
             this.total = result.result;
             if (this.messages.length === 0)
@@ -126,20 +143,10 @@ export default {
         },
 
         async handleSendMessage() {
-            let sender; let recipient;
-            if (this.channel.recipients[0]._id === this.profile._id) {
-                sender = this.channel.recipients[0]._id;
-                recipient = this.channel.recipients[1]._id;
-            }
-            else {
-                sender = this.channel.recipients[1]._id;
-                recipient = this.channel.recipients[0]._id;
-            }
-
             const body = {
                 text: this.input,
-                sender,
-                recipient,
+                sender: this.sender,
+                recipient: this.recipient,
                 isSend: true
             };
             this.input = '';
@@ -152,11 +159,17 @@ export default {
                 this.messages[index].isSend = false;
         },
 
+        async getUser(id: string) {
+            const user = await this.$axios.$get(`/api/v1/user/${id}`);
+            this.recipientInfo = user;
+        },
+
         async infiniteScroll() {
             const el = this.$refs.containerMessage;
             if (el.scrollTop === 0 && this.isScrollLoad === false) {
-                this.isScrollLoad = true;
                 this.page++;
+                console.log('scroll');
+
                 await this.loadMessage(this.channelId);
             }
         }
