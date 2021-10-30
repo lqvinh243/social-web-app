@@ -3,7 +3,7 @@
         <div class="main-content">
             <div data-app>
                 <Menu />
-                <div class="col-right" style="overflow: auto;height:calc(100vh - 48px)">
+                <div class="col-right">
                     <nuxt />
                 </div>
             </div>

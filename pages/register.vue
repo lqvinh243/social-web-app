@@ -49,7 +49,7 @@
                             ĐÃ CÓ TÀI KHOẢN?
                         </h1>
                         <p class="text-center">
-                            Đăng nhập ngay để thực hiện đấu giá
+                            Đăng nhập ngay!!
                         </p>
                         <nuxt-link to="/login" style="color: #fff" class="custom-login-button transparent">
                             Đăng nhập
@@ -64,7 +64,7 @@
             width="30%"
             :show-close="false"
         >
-            <div>Register successfully! Please check email to active account!</div>
+            <div>Register successfully! Login and have fun!</div>
             <nuxt-link to="/login">
                 Back to login
             </nuxt-link>

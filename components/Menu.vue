@@ -30,21 +30,35 @@
 
             <div class="menu">
                 <ul class="navbar-nav flex-row">
-                    <li class="nav-item px-2">
-                        <div class="nav-link">
-                            <span class="material-icons">home</span>
-                        </div>
-                    </li>
-                    <li class="nav-item px-2">
-                        <div class="nav-link">
-                            <span class="material-icons">near_me</span>
-                        </div>
-                    </li>
-                    <li class="nav-item px-2">
-                        <div class="nav-link">
-                            <span class="material-icons">explore</span>
-                        </div>
-                    </li>
+                    <el-tooltip class="item" effect="dark" content="Home" placement="bottom-start">
+                        <li class="nav-item px-2">
+                            <div class="nav-link">
+                                <nuxt-link to="/">
+                                    <i class="el-icon-s-home" />
+                                </nuxt-link>
+                            </div>
+                        </li>
+                    </el-tooltip>
+
+                    <el-tooltip class="item" effect="dark" content="Chat message" placement="bottom-start">
+                        <li class="nav-item px-2">
+                            <div class="nav-link">
+                                <nuxt-link to="/chat">
+                                    <i class="el-icon-chat-round" />
+                                </nuxt-link>
+                            </div>
+                        </li>
+                    </el-tooltip>
+
+                    <el-tooltip class="item" effect="dark" content="Find new user" placement="bottom-start">
+                        <li class="nav-item px-2">
+                            <div class="nav-link">
+                                <nuxt-link to="/new-user">
+                                    <i class="el-icon-user-solid" />
+                                </nuxt-link>
+                            </div>
+                        </li>
+                    </el-tooltip>
                     <li class="nav-item dropdown" style="opacity: 1">
                         <span
                             id="navbarDropdown"
@@ -182,5 +196,13 @@ export default Vue.extend({
 
     .search-header{
         width: 30%
+    }
+
+    i {
+        font-size:30px;
+    }
+
+    i:hover{
+        cursor: pointer;
     }
 </style>
