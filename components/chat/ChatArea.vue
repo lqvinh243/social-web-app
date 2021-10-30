@@ -52,6 +52,7 @@ export default {
     watch: {
         channel: {
             async handler(val:any) {
+                this.$nuxt.$loading.start();
                 this.messages = [];
                 this.page = 1;
                 this.channelId = val._id;

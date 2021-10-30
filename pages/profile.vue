@@ -12,7 +12,7 @@
                         <h2>{{ myProfile && myProfile.fullname || '' }}</h2>
 
                         <!--btn btn-outline-info-->
-                        <button class="btn btn btn-light btn-sm" onClick="setOnEdit()">
+                        <button class="btn btn btn-light btn-sm" @click="handleOpenUpdate">
                             Edit Profile
                         </button>
 
@@ -66,19 +66,22 @@
         <h1 v-else class="text-center">
             No post available
         </h1>
+        <ChangeProfileModal :dialog-visible="visibleDialog" @closeDialog="closeDialog" />
     </div>
 </template>
 <script lang="ts">
 import { mapGetters } from 'vuex';
-// import { meService } from '~/services/me';
+import ChangeProfileModal from '~/components/modals/ChangeProfileModal.vue';
 
 export default {
+    components: { ChangeProfileModal },
     middleware: ['authentication'],
     data() {
         return {
             myProfile: null as any,
             totalPost: 0,
-            posts: []
+            posts: [],
+            visibleDialog: false
         };
     },
     computed: {
@@ -127,6 +130,14 @@ export default {
 
         getFirstImage(images: string[]) {
             return images.length ? images[0] : '';
+        },
+
+        handleOpenUpdate() {
+            this.visibleDialog = true;
+        },
+
+        closeDialog() {
+            this.visibleDialog = false;
         }
     }
 };
