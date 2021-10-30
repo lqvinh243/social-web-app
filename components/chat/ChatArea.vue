@@ -1,42 +1,17 @@
 <template>
     <div class="w-100 ">
-        <div class="chat-area">
-            <div class="container">
-                <img src="/w3images/bandmember.jpg" alt="Avatar">
-                <p>Hello. How are you today?</p>
-                <span class="time-right">11:00</span>
-            </div>
-
-            <div class="container darker">
-                <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="right">
-                <p>Hey! I'm fine. Thanks for asking!</p>
-                <span class="time-left">11:01</span>
-            </div>
-
-            <div class="container">
-                <img src="/w3images/bandmember.jpg" alt="Avatar">
-                <p>Sweet! So, what do you wanna do today?</p>
-                <span class="time-right">11:02</span>
-            </div>
-
-            <div class="container darker">
-                <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="right">
-                <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-                <span class="time-left">11:05</span>
-            </div>
-            <div class="container darker">
-                <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="right">
-                <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-                <span class="time-left">11:05</span>
-            </div>
+        <div ref="containerMessage" class="chat-area" @scroll="infiniteScroll">
+            <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" />
         </div>
         <div>
-            <el-row class="w-100 h-100">
+            <el-row class="w-100 h-100" :gutter="8">
                 <el-col :span="22">
-                    <el-input v-model="input" placeholder="Please input password" />
+                    <el-input v-model="input" :disabled="!channel" placeholder="Enter message ..." />
                 </el-col>
                 <el-col :span="2">
-                    <i class="el-icon-s-promotion m-auto ml-0" style="font-size:40px" />
+                    <el-button type="primary" :disabled="!input.length" icon="el-icon-s-promotion" @click="handleSendMessage">
+                        Send message
+                    </el-button>
                 </el-col>
             </el-row>
         </div>
@@ -44,11 +19,148 @@
 </template>
 
 <script lang="ts">
+import { mapGetters } from 'vuex';
+import ChatAreaItem from '~/components/chat/ChatAreaItem.vue';
+import { connectWS } from '~/utils/socket';
 export default {
+    components: { ChatAreaItem },
     middleware: ['authentication'],
+    props: {
+        channel: {
+            type: Object,
+            default: () => null
+        },
+    },
     data: () => ({
-        input: ''
+        input: '',
+        messages: [],
+        total: 0,
+        scrollTop: 0,
+        page: 1,
+        channelId: null,
+        isScrollLoad: false,
+        scrollHeight: 0
     }),
+
+    computed: {
+        ...mapGetters('auth', ['profile'])
+    },
+
+    watch: {
+        channel: {
+            async handler(val:any) {
+                this.messages = [];
+                this.page = 1;
+                this.channelId = val._id;
+                this.isScrollLoad = false;
+                await this.loadMessage(this.channelId);
+                this.scrollBottom();
+            },
+            deep: true
+        }
+    },
+
+    mounted() {
+        const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
+
+        socket.on('connect', () => {
+            // eslint-disable-next-line no-console
+            console.log('Chat channel is connected!');
+        });
+
+        socket.on('disconnect', () => {
+            // eslint-disable-next-line no-console
+            console.log('Chat channel is disconnected!');
+        });
+
+        socket.on('connect_error', (err: Error) => {
+            // eslint-disable-next-line no-console
+            console.log('connect_error', err);
+        });
+
+        socket.on('new_message', (data:any) => {
+            let isScroll = false;
+            const el = this.$refs.containerMessage;
+            if (this.scrollTop === el.scrollTop)
+                isScroll = true;
+
+            this.messages.push(data);
+            this.$nextTick(() => {
+                if (isScroll)
+                    this.scrollBottom();
+            }
+            );
+        });
+    },
+
+    methods: {
+        scrollBottom() {
+            this.$nextTick(() => {
+                const el = this.$refs.containerMessage;
+                el.scrollTop = el.scrollHeight;
+                this.scrollTop = el.scrollTop;
+            });
+        },
+        async loadMessage(channelId: string) {
+            const el = this.$refs.containerMessage;
+            this.scrollHeight = el.scrollHeight;
+            this.$nuxt.$loading.start();
+            const result = await this.$axios.$get(`/api/v1/message/${channelId}?page=${this.page}`);
+            this.total = result.result;
+            if (this.messages.length === 0)
+                this.messages = this.messages.concat(result.messages.reverse());
+            else {
+                this.messages = result.messages.reverse().concat(this.messages);
+
+                this.$nextTick(() => {
+                    el.scrollTop = el.scrollHeight - this.scrollHeight;
+                });
+            }
+
+            if (this.total < 9)
+                this.isScrollLoad = true;
+            else
+                this.isScrollLoad = false;
+
+            this.$nuxt.$loading.finish();
+        },
+
+        async handleSendMessage() {
+            let sender; let recipient;
+            if (this.channel.recipients[0]._id === this.profile._id) {
+                sender = this.channel.recipients[0]._id;
+                recipient = this.channel.recipients[1]._id;
+            }
+            else {
+                sender = this.channel.recipients[1]._id;
+                recipient = this.channel.recipients[0]._id;
+            }
+
+            const body = {
+                text: this.input,
+                sender,
+                recipient,
+                isSend: true
+            };
+            this.input = '';
+            const index = this.messages.length;
+            this.messages.push(body);
+            this.scrollBottom();
+
+            const result = await this.$axios.$post('/api/v1/message', body);
+            if (result.msg !== 'Create Success!')
+                this.messages[index].isSend = false;
+        },
+
+        async infiniteScroll() {
+            const el = this.$refs.containerMessage;
+            if (el.scrollTop === 0 && this.isScrollLoad === false) {
+                this.isScrollLoad = true;
+                this.page++;
+                await this.loadMessage(this.channelId);
+            }
+        }
+    }
 };
 </script>
 <style scoped>
@@ -107,6 +219,9 @@ body{
 .chat-area{
     height: 400px;
     overflow: scroll;
+}
+i:hover{
+    cursor: pointer;
 }
 </style>
 

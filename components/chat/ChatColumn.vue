@@ -9,6 +9,7 @@
                 <v-list-item
                     v-for="(item, i) in conversations"
                     :key="i"
+                    @click="handleSelectChannel(item)"
                 >
                     <ColumnItem :item="item" />
                 </v-list-item>
@@ -35,6 +36,9 @@ export default {
             const result = await this.$axios.$get('/api/v1/conversations');
             this.total = result.result;
             this.conversations = result.conversations;
+        },
+        handleSelectChannel(channel: any) {
+            this.$emit('channel', channel);
         }
     }
 };

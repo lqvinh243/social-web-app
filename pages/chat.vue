@@ -2,10 +2,10 @@
     <el-container class="h-100 w-75 mx-auto mt-4">
         <el-row :gutter="20" class="w-100 h-100">
             <el-col :span="8">
-                <chat-column />
+                <chat-column @channel="channelSelect" />
             </el-col>
             <el-col :span="12">
-                <chat-area />
+                <chat-area :channel="channel" />
             </el-col>
         </el-row>
     </el-container>
@@ -17,6 +17,16 @@ import ChatColumn from '~/components/chat/ChatColumn.vue';
 export default {
     components: { ChatArea, ChatColumn },
     middleware: ['authentication'],
+    data() {
+        return {
+            channel: null
+        };
+    },
+    methods: {
+        channelSelect(channel: string) {
+            this.channel = channel;
+        }
+    }
 };
 </script>
 
