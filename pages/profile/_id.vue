@@ -31,15 +31,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="profile_tab">
-            <button class="active">
-                Posts
-            </button>
-            <button class="active">
-                Saved
-            </button>
-        </div>
         <!--Grid-->
         <div v-if="posts.length">
             <div class="post_thumb">
@@ -59,9 +50,9 @@
                 </div>
             </div>
         </div>
-        <h1 v-else class="text-center">
-            No post available
-        </h1>
+        <div v-else class="text-center">
+            <el-empty :image-size="200" description="No post available" />
+        </div>
     </div>
 </template>
 <script lang="ts">

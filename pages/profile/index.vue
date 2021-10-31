@@ -15,14 +15,11 @@
                 </div>
                 <div class="info_content">
                     <div class="info_content_title">
-                        <h2>{{ myProfile && myProfile.fullname || '' }}</h2>
+                        <h2>{{ (myProfile && myProfile.fullname) || '' }}</h2>
 
-                        <!--btn btn-outline-info-->
                         <button class="btn btn btn-light btn-sm" @click="handleOpenUpdate">
                             Edit Profile
                         </button>
-
-                        <!-- {/* // : <FollowBtn user={user} /> */} -->
                     </div>
 
                     <div class="mt-2 follow_btn">
@@ -30,14 +27,14 @@
                             {{ totalPost }} Posts
                         </span>
                         <span class="mr-4" @click="showListUser('follower')">
-                            {{ profile && profile.followers && profile.followers.length || 0 }} Followers
+                            {{ (profile && profile.followers && profile.followers.length) || 0 }} Followers
                         </span>
                         <span class="ml-4" @click="showListUser('following')">
-                            {{ profile && profile.followers && profile.following.length || 0 }} Following
+                            {{ (profile && profile.followers && profile.following.length) || 0 }} Following
                         </span>
                     </div>
-                    <p>Address: {{ myProfile && myProfile.address || 'No address' }}</p>
-                    <p>...</p>
+                    <div>Address: {{ (myProfile && myProfile.address) || 'No address' }}</div>
+                    <div v-html="describeYourself" />
                 </div>
             </div>
         </div>
@@ -64,9 +61,9 @@
                 </div>
             </div>
         </div>
-        <h1 v-else class="text-center">
+        <div v-else class="text-center">
             <el-empty :image-size="200" description="No post available" />
-        </h1>
+        </div>
         <ChangeProfileModal :dialog-visible="visibleDialog" @closeDialog="closeDialog" />
         <UploadAvatarModal :dialog-visible-avatar="visibleDialogAvatar" @closeDialogAvatar="closeDialogAvatar" />
         <ListUserModal :dialog-visible="visibleDialogUserList" :type="showListType" @closeDialog="closeDialogUserList" />
@@ -98,6 +95,9 @@ export default {
         avatarUrl(): string {
             return (this.myProfile && this.myProfile.avatar) ?? '';
         },
+        describeYourself():string {
+            return (this.profile && this.profile.describeYourself) ?? '...';
+        }
     },
     mounted() {
         this.$nextTick(() => {

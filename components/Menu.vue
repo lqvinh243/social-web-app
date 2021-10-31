@@ -114,15 +114,12 @@ import eventBus from '~/plugins/event-bus';
 
 export default Vue.extend({
     data: () => ({
-        items: [
-            { title: 'Điện thoại di động', id: 'mobile' },
-            { title: 'Máy tính xách tay', id: 'laptop' }
-        ],
         profiles: [
             { title: 'Đăng nhập', id: 'login', isAuth: false },
             { title: 'Đăng ký', id: 'register', isAuth: false },
-            { title: 'Thông tin cá nhân', id: 'profile', isAuth: true },
-            { title: 'Đăng xuất', id: 'logout', isAuth: true }],
+            { title: 'My profile', id: 'profile', isAuth: true },
+            { title: 'Change password', id: 'change-password', isAuth: true },
+            { title: 'Logout', id: 'logout', isAuth: true }],
         listSearch: [],
         loading: false,
         search: null,
@@ -158,19 +155,6 @@ export default Vue.extend({
         ...mapActions('auth', [
             'clearAuthentication',
         ]),
-        handleDrawer() {
-            this.$emit('emitDrawer');
-        },
-        querySelections(v: any) {
-            this.loading = true;
-            // Simulated ajax query
-            setTimeout(() => {
-                if (this.$route.path !== '/product')
-                    this.$router.push(`/product?query=${v}`);
-
-                this.loading = false;
-            }, 2000);
-        },
         handleRedirect(path: string) {
             switch (path) {
             case 'logout':
@@ -182,6 +166,9 @@ export default Vue.extend({
             case 'register':
             case 'login':
                 this.$router.push(`/${path}`);
+                break;
+            case 'change-password':
+                eventBus.$emit('OPEN_CHANGE_PASSWORD');
                 break;
             }
         }
