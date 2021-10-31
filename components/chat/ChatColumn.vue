@@ -1,10 +1,10 @@
 <template>
     <div class="w-100">
         <v-list dense>
-            <v-subheader>List chat</v-subheader>
             <v-list-item-group
                 v-model="selectedItem"
                 color="primary"
+                class="chat-column"
             >
                 <v-list-item
                     v-for="(item, i) in conversations"
@@ -43,4 +43,10 @@ export default {
     }
 };
 </script>
+<style scoped>
+.chat-column{
+    height: 400px;
+    overflow: scroll;
+}
+</style>
 

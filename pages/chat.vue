@@ -1,5 +1,8 @@
 <template>
-    <el-container class="h-100 w-75 mx-auto mt-4">
+    <div class="h-100 w-75 mx-auto mt-4">
+        <el-row>
+            <h1>Your chat message</h1>
+        </el-row>
         <el-row :gutter="20" class="w-100 h-100">
             <el-col :span="8">
                 <chat-column @channel="channelSelect" />
@@ -8,7 +11,7 @@
                 <chat-area :channel="channel" />
             </el-col>
         </el-row>
-    </el-container>
+    </div>
 </template>
 
 <script lang="ts">

@@ -1,11 +1,11 @@
 <template>
-    <div class="w-100 ">
+    <div v-if="channel" class="w-100">
         <div ref="containerMessage" class="chat-area" @scroll="infiniteScroll">
             <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" :recipient="recipientInfo" />
         </div>
         <div>
             <el-row class="w-100 h-100" :gutter="8">
-                <el-col :span="22">
+                <el-col :span="17">
                     <el-input v-model="input" :disabled="!channel" placeholder="Enter message ..." />
                 </el-col>
                 <el-col :span="2">
@@ -15,6 +15,9 @@
                 </el-col>
             </el-row>
         </div>
+    </div>
+    <div v-else class="chat-area">
+        <el-empty description="Select channel to chat!!" />
     </div>
 </template>
 
