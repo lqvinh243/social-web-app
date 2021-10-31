@@ -2,30 +2,6 @@
     <el-container class="h-100 w-75 mx-auto mt-4">
         <v-list v-if="!!total">
             <template v-for="(item, index) in users">
-                <!-- <el-row :key="index" style="width:800px">
-                    <el-col :span="15">
-                        <v-list-item>
-                            <v-list-item-avatar>
-                                <v-img :src="item.avatar" />
-                            </v-list-item-avatar>
-
-                            <v-list-item-content>
-                                <v-list-item-title v-html="item.fullname" />
-                                <v-list-item-subtitle v-html="getBio(item)" />
-                            </v-list-item-content>
-                        </v-list-item>
-                    </el-col>
-                    <el-col v-if="!item.isFollow" :span="5">
-                        <el-button class="mt-4" type="primary" icon="el-icon-circle-plus" @click="followUser(item._id)">
-                            Follow
-                        </el-button>
-                    </el-col>
-                    <el-col v-else :span="5">
-                        <el-button class="mt-4" type="primary" icon="el-icon-success" :disabled="true" @click="followUser(item._id)">
-                            Followed
-                        </el-button>
-                    </el-col>
-                </el-row> -->
                 <UserSuggestItem :key="index" :user="item" />
             </template>
         </v-list>
