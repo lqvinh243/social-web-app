@@ -41,15 +41,10 @@
                 </div>
             </div>
         </div>
-
-        <div class="profile_tab">
-            <button class="active">
-                Posts
-            </button>
-            <button class="active">
-                Saved
-            </button>
-        </div>
+        <el-tabs v-model="activeName" class="ml-4" @tab-click="handleClick">
+            <el-tab-pane label="Post" name="posts" />
+            <el-tab-pane label="Save post" name="save-posts" />
+        </el-tabs>
         <!--Grid-->
         <div v-if="posts.length">
             <div class="post_thumb">
@@ -62,8 +57,8 @@
                         >
 
                         <div class="post_thumb_menu">
-                            <i class="far fa-heart">3</i>
-                            <i class="far fa-comment">3</i>
+                            <i class="far fa-heart">{{ post.likes.length }}</i>
+                            <i class="far fa-comment">{{ post.comments.length }}</i>
                         </div>
                     </div>
                 </div>
@@ -95,6 +90,7 @@ export default {
             visibleDialogAvatar: false,
             visibleDialogUserList: false,
             showListType: 'follower',
+            activeName: 'posts'
         };
     },
     computed: {
@@ -116,6 +112,14 @@ export default {
             const result = await this.$axios.$get(`/api/v1/user_posts/${this.profile._id}`);
             if (result) {
                 this.posts = result.posts;
+                this.totalPost = result.result;
+            }
+        },
+
+        async getSavePost() {
+            const result = await this.$axios.$get('/api/v1/getSavePosts');
+            if (result) {
+                this.posts = result.savePosts;
                 this.totalPost = result.result;
             }
         },
@@ -170,6 +174,21 @@ export default {
 
         closeDialogUserList() {
             this.visibleDialogUserList = false;
+        },
+
+        async  handleClick() {
+            this.$nuxt.$loading.start();
+            this.posts = [];
+            switch (this.activeName) {
+            case 'posts':
+                await this.getPost();
+                break;
+
+            case 'save-posts':
+                await this.getSavePost();
+                break;
+            }
+            this.$nuxt.$loading.finish();
         },
     }
 };
