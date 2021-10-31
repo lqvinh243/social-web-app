@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts">
+import { mapActions, mapGetters } from 'vuex';
 import UserSuggestItem from '~/components/UserSuggestItem.vue';
 
 export default {
@@ -48,26 +49,20 @@ export default {
         total: 0,
         users: []
     }),
+    computed: {
+        ...mapGetters('auth', ['profile']),
+    },
     async mounted() {
         const result = await this.$axios.$get('/api/v1/suggestionsUser');
         this.total = result.result;
         this.users = result.users.map((item:any) => ({ ...item, isFollow: false }));
     },
     methods: {
+        ...mapActions('auth', ['updateProfile']),
+
         getBio(user:any): string {
             return user.bio ?? 'No bio for user!';
         },
-        async  followUser(id: string) {
-            const result = await this.$axios.$patch(`/api/v1/user/${id}/follow`);
-            if (result) {
-                this.$notify.success({
-                    title: 'Success',
-                    messsage: 'Follow user sucessfully!'
-                });
-                const item = this.users.find((item:any) => item._id === id);
-                item.isFollow = true;
-            }
-        }
     }
 
 };

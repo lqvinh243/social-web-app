@@ -30,10 +30,10 @@
                             {{ totalPost }} Posts
                         </span>
                         <span class="mr-4" @click="showListUser('follower')">
-                            {{ myProfile && myProfile.followers && myProfile.followers.length || 0 }} Followers
+                            {{ profile && profile.followers && profile.followers.length || 0 }} Followers
                         </span>
                         <span class="ml-4" @click="showListUser('following')">
-                            {{ myProfile && myProfile.followers && myProfile.following.length || 0 }} Following
+                            {{ profile && profile.followers && profile.following.length || 0 }} Following
                         </span>
                     </div>
                     <p>Address: {{ myProfile && myProfile.address || 'No address' }}</p>

@@ -22,6 +22,7 @@
 </template>
 
 <script lang="ts">
+import { mapActions } from 'vuex';
 export default {
     middleware: ['authentication'],
     props: {
@@ -33,13 +34,13 @@ export default {
     data: () => ({
         loading: false,
         data: {},
-        currentDate: 'abc'
     }),
     mounted() {
         this.data = { ...this.user };
         console.log(this.data);
     },
     methods: {
+        ...mapActions('auth', ['updateProfile']),
         getBio(user:any): string {
             return user.bio ?? 'No bio for user!';
         },
@@ -52,8 +53,15 @@ export default {
                     messsage: 'Follow user sucessfully!'
                 });
                 this.data.isFollow = true;
+                this.getInfoUser();
             }
             this.loading = false;
+        },
+
+        async getInfoUser() {
+            const result = await this.$axios.$get(`/api/v1/user/${this.profile._id}`);
+            if (result)
+                this.updateProfile(result.user);
         }
     }
 
