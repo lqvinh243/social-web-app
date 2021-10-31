@@ -89,7 +89,7 @@ export default {
             visibleDialog: false,
             visibleDialogAvatar: false,
             visibleDialogUserList: false,
-            showListType: 'follower',
+            showListType: 'following',
             activeName: 'posts'
         };
     },

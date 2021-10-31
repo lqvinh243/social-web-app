@@ -14,7 +14,7 @@
                 </v-list-item-content>
             </v-list-item>
         </el-col>
-        <el-col v-if="!data.isFollow" :span="5">
+        <el-col v-if="data.isFollow === false" :span="5">
             <el-button :loading="loading" class="mt-4" type="primary" icon="el-icon-circle-plus" @click="followUser(data._id)">
                 Follow
             </el-button>
@@ -59,6 +59,7 @@ export default {
     },
     mounted() {
         this.data = { ...this.user };
+        console.log(this.data);
     },
     methods: {
         ...mapActions('auth', ['updateProfile']),
@@ -68,19 +69,35 @@ export default {
         },
         async followUser(id: string) {
             this.loading = true;
-            const result = await this.$axios.$patch(`/api/v1/user/${id}/follow`);
+            const result = await this.$axios.$patch(`/api/v1/user/${id}/follow`)
+                .catch((_:any) => {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Some error, please try again!'
+                    });
+                    this.data.isFollow = false;
+                }); ;
             if (result) {
                 this.$notify.success({
                     title: 'Success',
                     messsage: 'Follow user sucessfully!'
                 });
                 this.data.isFollow = true;
+
+                this.loading = true;
             }
             this.loading = false;
         },
         async unfollowUser(id: string) {
             this.loading = true;
-            const result = await this.$axios.$patch(`/api/v1/user/${id}/unfollow`);
+            const result = await this.$axios.$patch(`/api/v1/user/${id}/unfollow`)
+                .catch((_:any) => {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Some error, please try again!'
+                    });
+                    this.loading = false;
+                }); ;
             if (result) {
                 this.$notify.success({
                     title: 'Success',

@@ -46,7 +46,14 @@ export default {
         },
         async followUser(id: string) {
             this.loading = true;
-            const result = await this.$axios.$patch(`/api/v1/user/${id}/follow`);
+            const result = await this.$axios.$patch(`/api/v1/user/${id}/follow`)
+                .catch((_:any) => {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Some error, please try again!'
+                    });
+                    this.loading = false;
+                });
             if (result) {
                 this.$notify.success({
                     title: 'Success',

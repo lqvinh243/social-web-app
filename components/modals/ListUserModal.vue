@@ -28,13 +28,13 @@ export default Vue.extend({
         },
         type: {
             type: String,
-            default: () => 'follower'
+            default: () => 'following'
         }
     },
     data() {
         return {
             list: [] as any[],
-            title: 'List follower'
+            title: 'List following'
         };
     },
     computed: {
@@ -56,7 +56,7 @@ export default Vue.extend({
     },
     mounted() {
         this.$nextTick(() => {
-            this.getListFollower();
+            this.getListFollowing();
         });
     },
     methods: {
@@ -66,7 +66,8 @@ export default Vue.extend({
             await this.getInfoUser();
         },
         getListFollower() {
-            this.list = this.profile.followers.map((item:any) => ({ ...item, isFollow: false }));
+            this.list = this.profile.followers.map((item:any) => ({ ...item, isFollow: item.followers.includes(this.profile._id) }));
+            console.log(this.list);
         },
         getListFollowing() {
             this.list = this.profile.following.map((item:any) => ({ ...item, isFollow: true }));
@@ -76,8 +77,14 @@ export default Vue.extend({
             const result = await this.$axios.$get(`/api/v1/user/${this.profile._id}`);
             if (result) {
                 this.updateProfile(result.user);
-                this.getListFollower();
-                this.getListFollowing();
+                switch (this.type) {
+                case 'follower':
+                    this.list = [...result.user.followers.map((item:any) => ({ ...item, isFollow: false }))];
+                    break;
+                case 'following':
+                    this.list = [...result.user.following.map((item:any) => ({ ...item, isFollow: true }))];
+                    break;
+                }
             }
         }
     }
