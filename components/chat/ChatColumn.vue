@@ -1,10 +1,9 @@
 <template>
     <div class="w-100">
-        <v-list dense>
+        <v-list v-if="conversations.length" dense class="chat-column">
             <v-list-item-group
                 v-model="selectedItem"
                 color="primary"
-                class="chat-column"
             >
                 <v-list-item
                     v-for="(item, i) in conversations"
@@ -15,6 +14,7 @@
                 </v-list-item>
             </v-list-item-group>
         </v-list>
+        <el-empty v-else description="No channel available" class="chat-column" />
     </div>
 </template>
 

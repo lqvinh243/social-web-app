@@ -7,7 +7,9 @@
                 </v-list-item-avatar>
 
                 <v-list-item-content>
-                    <v-list-item-title v-html="data.fullname" />
+                    <nuxt-link :to="`/profile/${data._id}`">
+                        <v-list-item-title v-html="data.fullname" />
+                    </nuxt-link>
                     <v-list-item-subtitle v-html="getAddress" />
                 </v-list-item-content>
             </v-list-item>

@@ -70,7 +70,7 @@
             </div>
         </div>
         <h1 v-else class="text-center">
-            No post available
+            <el-empty :image-size="200" description="No post available" />
         </h1>
         <ChangeProfileModal :dialog-visible="visibleDialog" @closeDialog="closeDialog" />
         <UploadAvatarModal :dialog-visible-avatar="visibleDialogAvatar" @closeDialogAvatar="closeDialogAvatar" />

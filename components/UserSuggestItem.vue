@@ -1,6 +1,6 @@
 <template>
     <el-card :body-style="{ padding: '0px' }" hadow="hover" class="test">
-        <img class="image" style="height:200px" :src="user.avatar">
+        <img class="image" style="height:200px;width:200px" :src="user.avatar">
         <div style="padding: 14px;">
             <nuxt-link :to="`/profile/${data._id}`">
                 <span>{{ data.fullname }}</span>
