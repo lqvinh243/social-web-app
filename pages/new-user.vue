@@ -1,14 +1,14 @@
 <template>
-    <el-container class="h-100 w-75 mx-auto mt-4">
-        <v-list v-if="!!total">
-            <template v-for="(item, index) in users">
-                <UserSuggestItem :key="index" :user="item" />
-            </template>
-        </v-list>
+    <div class="h-100 mx-auto mt-4 w-75">
+        <el-row v-if="!!total" :gutter="5">
+            <el-col v-for="(item, index) in users" :key="index" :span="4.5">
+                <UserSuggestItem :user="item" />
+            </el-col>
+        </el-row>
         <div v-else>
             <h1>No data</h1>
         </div>
-    </el-container>
+    </div>
 </template>
 
 <script lang="ts">

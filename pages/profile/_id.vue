@@ -9,35 +9,25 @@
                             class="supper-avatar"
                         >
                     </div>
-                    <el-button @click="openChangeAvatar">
-                        Change avatar
-                    </el-button>
                 </div>
                 <div class="info_content">
                     <div class="info_content_title">
-                        <h2>{{ myProfile && myProfile.fullname || '' }}</h2>
-
-                        <!--btn btn-outline-info-->
-                        <button class="btn btn btn-light btn-sm" @click="handleOpenUpdate">
-                            Edit Profile
-                        </button>
-
-                        <!-- {/* // : <FollowBtn user={user} /> */} -->
+                        <h2>{{ profile && profile.fullname || '' }}</h2>
                     </div>
 
                     <div class="mt-2 follow_btn">
                         <span class="mr-5">
                             {{ totalPost }} Posts
                         </span>
-                        <span class="mr-4" onClick="setShowFollowers()">
-                            {{ myProfile && myProfile.followers && myProfile.followers.length || 0 }} Followers
+                        <span class="mr-4">
+                            {{ profile && profile.followers && profile.followers.length || 0 }} Followers
                         </span>
                         <span class="ml-4">
-                            {{ myProfile && myProfile.followers && myProfile.following.length || 0 }} Following
+                            {{ profile && profile.followers && profile.following.length || 0 }} Following
                         </span>
                     </div>
-                    <p>Address: {{ myProfile && myProfile.address || 'No address' }}</p>
-                    <p>...</p>
+                    <p>Address: {{ profile && profile.address || 'No address' }}</p>
+                    <p v-html="describeYourself" />
                 </div>
             </div>
         </div>
@@ -72,44 +62,47 @@
         <h1 v-else class="text-center">
             No post available
         </h1>
-        <ChangeProfileModal :dialog-visible="visibleDialog" @closeDialog="closeDialog" />
-        <UploadAvatarModal :dialog-visible-avatar="visibleDialogAvatar" @closeDialogAvatar="closeDialogAvatar" />
     </div>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex';
-import ChangeProfileModal from '~/components/modals/ChangeProfileModal.vue';
-import UploadAvatarModal from '~/components/modals/UploadAvatarModal.vue';
 
 export default {
-    components: { ChangeProfileModal, UploadAvatarModal },
     middleware: ['authentication'],
     data() {
         return {
-            myProfile: null as any,
+            profile: null as any,
             totalPost: 0,
             posts: [],
             visibleDialog: false,
-            visibleDialogAvatar: false
+            visibleDialogAvatar: false,
+            userId: null
         };
     },
     computed: {
-        ...mapGetters('auth', ['profile', 'roleId']),
         avatarUrl(): string {
-            return (this.myProfile && this.myProfile.avatar) ?? '';
+            return (this.profile && this.profile.avatar) ?? '';
         },
+        describeYourself():string {
+            return (this.profile && this.profile.describeYourself) ?? '...';
+        }
     },
-    mounted() {
-        this.$nextTick(() => {
+    async mounted() {
+        await this.$nextTick(async () => {
+            this.userId = this.$route.params.id;
             this.$nuxt.$loading.start();
-            this.myProfile = { ...this.profile };
+            await this.getProfile();
             this.getPost();
             this.$nuxt.$loading.finish();
         });
     },
     methods: {
+        async getProfile() {
+            const result = await this.$axios.$get(`/api/v1/user/${this.userId}`);
+            if (result)
+                this.profile = result.user;
+        },
         async getPost() {
-            const result = await this.$axios.$get(`/api/v1/user_posts/${this.profile._id}`);
+            const result = await this.$axios.$get(`/api/v1/user_posts/${this.userId}`);
             if (result) {
                 this.posts = result.posts;
                 this.totalPost = result.result;
@@ -139,26 +132,7 @@ export default {
 
         getFirstImage(images: string[]) {
             return images.length ? images[0] : '';
-        },
-
-        handleOpenUpdate() {
-            this.visibleDialog = true;
-        },
-
-        closeDialog() {
-            this.visibleDialog = false;
-        },
-
-        openChangeAvatar() {
-            this.visibleDialogAvatar = true;
-        },
-
-        closeDialogAvatar(url: string) {
-            this.visibleDialogAvatar = false;
-            if (url)
-                this.myProfile.avatar = url;
         }
-
     }
 };
 </script>

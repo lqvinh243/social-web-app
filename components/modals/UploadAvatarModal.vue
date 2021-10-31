@@ -95,10 +95,14 @@ export default {
             const formData = new FormData();
             formData.append('file', this.fileList[0].file.raw);
             const result = await this.$axios.$patch('/api/v1/user/avatar', formData);
-            if (result)
+            if (result) {
                 this.updateAvatar(result.avatar);
-
-            this.$emit('closeDialogAvatar', result.avatar);
+                this.$emit('closeDialogAvatar', result.avatar);
+                this.$notify.success({
+                    title: 'Success',
+                    message: 'Upload avatar successully!'
+                });
+            }
             this.$nuxt.$loading.finish();
         }
     }

@@ -104,6 +104,7 @@ export default Vue.extend({
                             title: 'Success',
                             message: 'Update profile successfully!'
                         });
+                        this.$emit('closeDialog');
                     }
                 }
             });

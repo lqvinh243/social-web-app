@@ -1,28 +1,24 @@
 <template>
-    <el-row style="width:800px">
-        <el-col :span="15">
-            <v-list-item>
-                <v-list-item-avatar>
-                    <v-img :src="data.avatar" />
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                    <v-list-item-title v-html="data.fullname" />
-                    <v-list-item-subtitle v-html="getBio(data)" />
-                </v-list-item-content>
-            </v-list-item>
-        </el-col>
-        <el-col v-if="!data.isFollow" :span="5">
-            <el-button :loading="loading" class="mt-4" type="primary" icon="el-icon-circle-plus" @click="followUser(data._id)">
-                Follow
-            </el-button>
-        </el-col>
-        <el-col v-else :span="5">
-            <el-button class="mt-4" type="primary" icon="el-icon-success" :disabled="true">
-                Followed
-            </el-button>
-        </el-col>
-    </el-row>
+    <el-card :body-style="{ padding: '0px' }" hadow="hover" class="test">
+        <img class="image" style="height:200px" :src="user.avatar">
+        <div style="padding: 14px;">
+            <nuxt-link :to="`/profile/${data._id}`">
+                <span>{{ data.fullname }}</span>
+            </nuxt-link>
+            <div class="bottom clearfix">
+                <el-col v-if="!data.isFollow" class="m-0 p-0">
+                    <el-button :loading="loading" class="mt-4" type="primary" icon="el-icon-circle-plus" @click="followUser(data._id)">
+                        Follow
+                    </el-button>
+                </el-col>
+                <el-col v-else>
+                    <el-button class="mt-4" type="primary" icon="el-icon-success" :disabled="true">
+                        Followed
+                    </el-button>
+                </el-col>
+            </div>
+        </div>
+    </el-card>
 </template>
 
 <script lang="ts">
@@ -36,10 +32,12 @@ export default {
     },
     data: () => ({
         loading: false,
-        data: {}
+        data: {},
+        currentDate: 'abc'
     }),
     mounted() {
         this.data = { ...this.user };
+        console.log(this.data);
     },
     methods: {
         getBio(user:any): string {
@@ -61,4 +59,12 @@ export default {
 
 };
 </script>
+<style scoped>
+.test{
+    height: 100% ;
+    display: flex;
+    flex-direction: column;
+    justify-content: space - between;
+}
 
+</style>
