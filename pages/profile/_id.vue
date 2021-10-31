@@ -123,6 +123,11 @@ export default {
 
         getFirstImage(images: string[]) {
             return images.length ? images[0] : '';
+        },
+
+        async getCountPost() {
+            const result = await this.$axios.$get(`/api/v1/users/countpost?userId=${this.userId}`);
+            this.totalPost = result.numOfPosts;
         }
     }
 };

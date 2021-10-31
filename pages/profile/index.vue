@@ -104,24 +104,21 @@ export default {
             this.$nuxt.$loading.start();
             this.myProfile = { ...this.profile };
             this.getPost();
+            this.getCountPost();
             this.$nuxt.$loading.finish();
         });
     },
     methods: {
         async getPost() {
             const result = await this.$axios.$get(`/api/v1/user_posts/${this.profile._id}`);
-            if (result) {
+            if (result)
                 this.posts = result.posts;
-                this.totalPost = result.result;
-            }
         },
 
         async getSavePost() {
             const result = await this.$axios.$get('/api/v1/getSavePosts');
-            if (result) {
+            if (result)
                 this.posts = result.savePosts;
-                this.totalPost = result.result;
-            }
         },
 
         resetForm(formName: string) {
@@ -190,6 +187,11 @@ export default {
             }
             this.$nuxt.$loading.finish();
         },
+
+        async getCountPost() {
+            const result = await this.$axios.$get('/api/v1/users/countpost');
+            this.totalPost = result.numOfPosts;
+        }
     }
 };
 </script>
