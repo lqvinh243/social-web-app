@@ -19,7 +19,7 @@
             </el-col>
         </el-row>
         <client-only>
-            <ckeditor v-model="content" class="h-25" :config="editorConfig" />
+            <ckeditor v-model="content" :config="editorConfig" />
         </client-only>
         <p>Add your post</p>
         <el-upload

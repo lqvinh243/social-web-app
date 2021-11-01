@@ -1,0 +1,204 @@
+<template>
+    <div class="card my-3">
+        <div class="card_header">
+            <div class="d-flex">
+                <img :src="item.user.avatar" class="big-avatar">
+                <div class="card_name ml-1">
+                    <h6>
+                        <div class="text-dark">
+                            {{ item.user.fullname || '' }}
+                        </div>
+                    </h6>
+                    <small class="text-muted">{{ new Date(item.updatedAt).toISOString().substring(0, 10) }}</small>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <span id="moreLink" class="material-icons" data-toggle="dropdown">
+                    more_horiz
+                </span>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item">
+                        <span class="material-icons">create</span>
+                        Edit Post
+                    </div>
+                    <div class="dropdown-item">
+                        <span class="material-icons">delete_outline</span>
+                        Remove Post
+                    </div>
+                    <div class="dropdown-item">
+                        <span class="material-icons">content_copy</span>
+                        Copy Link
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card_body">
+            <div class="demo-image__preview text-center">
+                <el-image
+                    style="width: 400px; height: 400px;"
+                    :src="item.images[0]"
+                    :preview-src-list="item.images"
+                />
+            </div>
+        </div>
+        <div class="card_footer">
+            <div class="card_icon_menu">
+                <div class="card-icon-menu-react">
+                    <i class="far fa-heart" />
+                    <img src="../assets/images/send.svg" alt="Send">
+                </div>
+                <i class="far fa-bookmark" />
+            </div>
+            <div class="d-flex justify-content-between">
+                <h6 style="padding: 0 25px; cursor: pointer">
+                    <div v-if="item.likes.length > 0">
+                        {{ item.likes.length }}  likes
+                    </div>
+                </h6>
+                <h6 style="padding: 0 25px; cursor: pointer">
+                    <div>{{ comments.length === 0 ? 'No' : comments.length }} comments</div>
+                </h6>
+            </div>
+        </div>
+        <div v-if="comments.length > 0" class="comments">
+            <div v-for="index in commentLength" :key="index" class="comment_display">
+                <!-- <div v-for="(comment, index) in item.comments" :key="index" class="comment_display"> -->
+                <div
+                    v-if="index - 1 < comments.length"
+                    class="comment_card mt-2"
+                    style="opacity:  1 ;
+                    pointerEvents:  inherit"
+                >
+                    <div class="d-flex text-dark">
+                        <div class="block">
+                            <el-avatar :size="50" :src="comments[index - 1].user.avatar" />
+                        </div>
+                        <h6 class="mx-1 mt-2">
+                            {{ comments[index - 1].user.fullname || '' }}
+                        </h6>
+                    </div>
+
+                    <div class="comment_content">
+                        <div
+                            class="flex-fill"
+                            style="
+                              filter: 'invert(1)';
+                              color: 'white'
+                          "
+                        >
+                            <div>
+                                <div v-if="comments[index - 1].tag" class="mr-1">
+                                    @{{ comments[index - 1].tag }}
+                                </div>
+
+                                <div v-html="comments[index - 1].content" />
+                            </div>
+
+                            <div style="cursor: pointer">
+                                <small class="text-muted mr-3">
+                                    {{ showTime(comments[index - 1].createdAt) }}
+                                </small>
+
+                                <small v-if="comments[index - 1].likes && comments[index - 1].likes.length > 0" class="font-weight-bold mr-3">
+                                    <div> {{ comments[index - 1].likes.length }} likes</div>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mx-2" style="cursor: pointer">
+                            <div class="menu">
+                                <div class="nav-item dropdown">
+                                    <span id="moreLink" class="material-icons" data-toggle="dropdown">
+                                        more_vert
+                                    </span>
+
+                                    <div class="dropdown-menu" aria-labelledby="moreLink">
+                                        <div class="dropdown-item">
+                                            <span class="material-icons">create</span> Edit
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <span class="material-icons">delete_outline</span> Remove
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="commentLength < item.comments.length" class="p-2 border-top" style="cursor: pointer; color: crimson" @click="seeMoreComment">
+                See more comments...
+            </div>
+        </div>
+        <div class="card-footer comment_input">
+            <input
+                v-model="content"
+                type="text"
+                placeholder="Add your comments..."
+                value=""
+                style="
+                              filter: invert(1);
+                              color: white;
+                              background: rgba(0, 0, 0, 0.03);
+                            "
+            >
+            <button class="postBtn" @click="submitComment({postId: item._id, content, reply:null, postUserId: item.user._id })">
+                Post
+            </button>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { mapGetters } from 'vuex';
+import moment from 'moment';
+import { commentService } from '~/services/comment';
+
+export default {
+    props: {
+        item: {
+            type: Object,
+            default: () => {}
+        }
+    },
+    data() {
+        return {
+            content: '',
+            commentLength: 1,
+            comments: []
+        };
+    },
+    computed: {
+        ...mapGetters('auth', ['profile'])
+    },
+    mounted() {
+        this.comments = this.item.comments;
+        this.comments = this.comments.reverse();
+    },
+
+    methods: {
+        submitComment(value: Object) {
+            this.$nuxt.$loading.start();
+            commentService.postComment(value)
+                .then((item) => {
+                    this.content = '';
+                    item.newComment.user = { ...this.profile };
+                    this.comments.unshift(item.newComment);
+                    this.commentLength++;
+                })
+                .finally(() => {
+                    this.$nuxt.$loading.finish();
+                });
+        },
+        seeMoreComment() {
+            this.commentLength += 1;
+        },
+
+        showTime(time:any) {
+            return moment(time).fromNow();
+        }
+    }
+};
+</script>
+
