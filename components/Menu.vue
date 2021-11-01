@@ -87,7 +87,7 @@
                                     aria-expanded="false"
                                 >
                                     <img
-                                        src="https://res.cloudinary.com/devat-channel/image/upload/v1631811242/v-network/vj9pee0vwrifc1bugijz.jpg"
+                                        :src="getAvatar"
                                         class="medium-avatar"
                                     >
                                 </span>
@@ -109,7 +109,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import eventBus from '~/plugins/event-bus';
 
 export default Vue.extend({
@@ -126,12 +126,18 @@ export default Vue.extend({
         select: null,
     }),
     computed: {
+        ...mapGetters('auth', ['profile']),
+
         dropdownSelection():any {
             return this.profiles.filter((item:any) => item.isAuth === this.$auth.isAuthenticated());
         },
 
         showMenuBar():boolean {
             return this.$auth.isAuthenticated();
+        },
+
+        getAvatar() {
+            return this.profile.avatar;
         }
     },
 
