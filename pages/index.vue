@@ -14,6 +14,9 @@
             <div v-for="(item) in postList" :key="item._id" class="posts">
                 <PostItem :item="item" />
             </div>
+            <div v-if="!postList.length" class="text-center">
+                <el-empty :image-size="200" description="No post available" />
+            </div>
         </div>
     </div>
 </template>
