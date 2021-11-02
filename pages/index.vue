@@ -65,13 +65,25 @@ export default Vue.extend({
         });
 
         socket.on('like_post', (data) => {
-            console.log(data);
-
             eventBus.$emit('LIKE_POST', data);
         });
 
         socket.on('unlike_post', (data) => {
             eventBus.$emit('UNLIKE_POST', data);
+        });
+
+        const socketComment = connectWS(this.$config.wsUrl, 'comment', this.$store.state.auth.accessToken);
+        socketComment.on('connect', () => {
+            console.log('Comment channel is connected!');
+        });
+
+        socketComment.on('disconnect', () => {
+            // eslint-disable-next-line no-console
+            console.log('socketComment is disconnected!');
+        });
+
+        socketComment.on('comment_post', (data) => {
+            eventBus.$emit('COMMENT_POST', data);
         });
     },
 

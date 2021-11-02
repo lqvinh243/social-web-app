@@ -186,16 +186,19 @@ export default {
         this.isSave = this.saves.includes(this.item._id);
 
         eventBus.$on('LIKE_POST', (data:any) => {
-            if (this.id === data.id && this.profile._id !== data.user._id) {
-                console.log(data);
+            if (this.id === data.id && this.profile._id !== data.user._id)
                 this.likes = this.likes.concat(data);
-            }
         });
 
         eventBus.$on('UNLIKE_POST', (data:any) => {
-            console.log(data);
             if (this.id === data.id && this.profile._id !== data.user._id)
                 this.likes = this.likes.filter((item:any) => item._id !== data.user._id);
+        });
+
+        eventBus.$on('COMMENT_POST', (data:any) => {
+            this.comments.unshift(data);
+            if (this.commentLength !== 1)
+                this.commentLength++;
         });
     },
 
