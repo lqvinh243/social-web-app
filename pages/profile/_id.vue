@@ -105,18 +105,6 @@ export default {
             this.dialogVisible = false;
         },
 
-        handleChangeImage(e:any) {
-            if (e.target.files && e.target.files.length) {
-                const file = e.target.files[0];
-                const urlCreator = window.URL || window.webkitURL;
-                const imageUrl = urlCreator.createObjectURL(file);
-                const image :any = document.getElementById('avatar');
-                if (image)
-                    image.src = imageUrl;
-                this.avatarUpload = file;
-            }
-        },
-
         replaceByDefault(e:any) {
             e.target.src = require('~/assets/images/avatar-default.png');
         },

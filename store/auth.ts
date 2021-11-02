@@ -9,13 +9,15 @@ export interface IAuthState {
     userId: string | null;
     roleId: string | null;
     profile: IUser | null;
+    usersOnline: string[];
 }
 
 export const state = (): IAuthState => ({
     accessToken: null,
     userId: null,
     roleId: null,
-    profile: null
+    profile: null,
+    usersOnline: []
 });
 
 export const getters: GetterTree<IAuthState, IRootState> = {
@@ -23,6 +25,7 @@ export const getters: GetterTree<IAuthState, IRootState> = {
     userId: state => state.userId,
     roleId: state => state.roleId,
     profile: state => state.profile,
+    usersOnline: state => state.usersOnline
 };
 
 export const mutationType = {
@@ -30,7 +33,10 @@ export const mutationType = {
     USER_ID: 'user_id',
     ROLE_ID: 'role_id',
     PROFILE: 'profile',
-    AVATAR: 'avatar'
+    AVATAR: 'avatar',
+    LIST_ONLINE: 'list_online',
+    USER_ONLINE: 'user_online',
+    USER_OFFLINE: 'user_offline'
 };
 
 export const mutations: MutationTree<IAuthState> = {
@@ -50,6 +56,16 @@ export const mutations: MutationTree<IAuthState> = {
         if (state.profile)
             state.profile.avatar = avatar;
     },
+    [mutationType.LIST_ONLINE]: (state, usersOnline: string[]) => {
+        state.usersOnline = usersOnline;
+    },
+    [mutationType.USER_ONLINE]: (state, userId: string) => {
+        if (!state.usersOnline.find(item => item === userId))
+            state.usersOnline.push(userId);
+    },
+    [mutationType.USER_OFFLINE]: (state, userId: string) => {
+        state.usersOnline = state.usersOnline.filter(item => item !== userId);
+    }
 };
 
 export const actions: ActionTree<IAuthState, IRootState> = {
@@ -75,5 +91,17 @@ export const actions: ActionTree<IAuthState, IRootState> = {
 
     updateAvatar({ commit }, avatar: string) {
         commit(mutationType.AVATAR, avatar);
+    },
+
+    listUserOnline({ commit }, usersOnline: string[]) {
+        commit(mutationType.LIST_ONLINE, usersOnline);
+    },
+
+    userOnline({ commit }, userId) {
+        commit(mutationType.USER_ONLINE, userId);
+    },
+
+    userOffline({ commit }, userId) {
+        commit(mutationType.USER_OFFLINE, userId);
     }
 };

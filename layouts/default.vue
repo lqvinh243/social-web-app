@@ -14,10 +14,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 import Menu from '~/components/Menu.vue';
 import ChangePasswordModal from '~/components/modals/ChangePasswordModal.vue';
-// import { connectWS } from '~/utils/socket';
-
+import { connectWS } from '~/utils/socket';
 export default Vue.extend({
     components: { Menu, ChangePasswordModal },
 
@@ -29,62 +29,36 @@ export default Vue.extend({
         ],
     }),
 
-    mounted() {
-        // const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
-        // socket.on('connect', () => {
-        //     console.log('Chat channel is connected!');
-        // });
+    computed: {
 
-        // socket.on('disconnect', () => {
-        //     // eslint-disable-next-line no-console
-        //     console.log('Bid channel is disconnected!');
-        // });
+    },
 
-        // if (this.$auth.isAuthenticated()) {
-        // if (this.$auth.isAuthenticated()) {
-        //     const socket = connectWS(this.$config.wsUrl, 'chat', this.$store.state.auth.accessToken);
+    async mounted() {
+        const socket = connectWS(this.$config.wsUrl, '', this.$store.state.auth.accessToken);
+        socket.on('connect', () => {
+            console.log('Socket is connected!');
+        });
 
-        //     socket.on('connect', () => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('Chat channel is connected!');
-        //     });
+        socket.on('disconnect', () => {
+            // eslint-disable-next-line no-console
+            console.log('socket is disconnected!');
+        });
 
-        //     socket.on('disconnect', () => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('Chat channel is disconnected!');
-        //     });
+        socket.on('user_online', (data) => {
+            this.userOnline(data.userId);
+        });
 
-        //     socket.on('connect_error', (err: Error) => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('connect_error', err);
-        //     });
+        socket.on('user_offline', (data) => {
+            this.userOffline(data.userId);
+        });
 
-        //     socket.on('new_chat', (data:any) => {
-        //         // eslint-disable-next-line no-console
-        //         console.log('new chat', data);
-        //     });
-        // }
-
-        // // eslint-disable-next-line no-console
-        // const socket = connectWS(this.$config.wsUrl, 'tracking');
-
-        // socket.on('connect', () => {
-        //     // eslint-disable-next-line no-console
-        //     console.log('Tracking channel is connected!');
-        // });
-
-        // socket.on('disconnect', () => {
-        //     // eslint-disable-next-line no-console
-        //     console.log('Tracking channel is disconnected!');
-        // });
-
-        // socket.on('connect_error', (err: Error) => {
-        //     // eslint-disable-next-line no-console
-        //     console.log('connect_error', err);
-        // });
+        const result = await this.$axios.$get('/api/v1/user/online');
+        if (result)
+            this.listUserOnline(result.usersOnline || []);
     },
 
     methods: {
+        ...mapActions('auth', ['listUserOnline', 'userOnline', 'userOffline']),
         getDrawer() {
             this.drawer = !this.drawer;
         }
