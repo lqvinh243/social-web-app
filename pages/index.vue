@@ -26,7 +26,9 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import CreatePostModal from '~/components/modals/CreatePostModal.vue';
 import PostItem from '~/components/PostItem.vue';
+import eventBus from '~/plugins/event-bus';
 import { postsService } from '~/services/posts';
+import { connectWS } from '~/utils/socket';
 
 export default Vue.extend({
     components: { PostItem, CreatePostModal },
@@ -51,6 +53,30 @@ export default Vue.extend({
         this.$nextTick(() => {
             this.init();
         });
+
+        const socket = connectWS(this.$config.wsUrl, 'like', this.$store.state.auth.accessToken);
+        socket.on('connect', () => {
+            console.log('Like channel is connected!');
+        });
+
+        socket.on('disconnect', () => {
+            // eslint-disable-next-line no-console
+            console.log('socket is disconnected!');
+        });
+
+        socket.on('like_post', (data) => {
+            console.log(data);
+
+            eventBus.$emit('LIKE_POST', data);
+        });
+
+        socket.on('unlike_post', (data) => {
+            eventBus.$emit('UNLIKE_POST', data);
+        });
+    },
+
+    destroyed() {
+        eventBus.$destroy();
     },
 
     methods: {

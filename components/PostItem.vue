@@ -60,12 +60,12 @@
             </div>
         </div>
         <div v-if="comments.length > 0" class="comments">
-            <div v-for="index in commentLength" :key="index" class="comment_display">
+            <div v-for="index in commentLength" :key="index" class="comment_display" style="transform: rotate(180deg);">
                 <div
                     v-if="index - 1 < comments.length"
                     class="comment_card mt-2"
                     style="opacity:  1 ;
-                    pointerEvents:  inherit"
+                    pointerEvents:  inherit; transform: rotate(-180deg); "
                 >
                     <div class="d-flex text-dark">
                         <div class="block">
@@ -151,6 +151,7 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import moment from 'moment';
+import eventBus from '~/plugins/event-bus';
 import { commentService } from '~/services/comment';
 
 export default {
@@ -162,6 +163,7 @@ export default {
     },
     data() {
         return {
+            id: null,
             content: '',
             commentLength: 1,
             comments: [],
@@ -175,12 +177,30 @@ export default {
         ...mapGetters('auth', ['profile'])
     },
     mounted() {
+        this.id = this.item._id;
         this.comments = this.item.comments;
         this.comments = this.comments.reverse();
         this.likes = this.item.likes;
         this.isLike = !!(this.likes.find((item:any) => item._id === this.profile._id));
         this.saves = [...this.profile.saved];
         this.isSave = this.saves.includes(this.item._id);
+
+        eventBus.$on('LIKE_POST', (data:any) => {
+            if (this.id === data.id && this.profile._id !== data.user._id) {
+                console.log(data);
+                this.likes = this.likes.concat(data);
+            }
+        });
+
+        eventBus.$on('UNLIKE_POST', (data:any) => {
+            console.log(data);
+            if (this.id === data.id && this.profile._id !== data.user._id)
+                this.likes = this.likes.filter((item:any) => item._id !== data.user._id);
+        });
+    },
+
+    destroyed() {
+        eventBus.$destroy();
     },
 
     methods: {
