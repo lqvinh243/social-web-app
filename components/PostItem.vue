@@ -44,15 +44,14 @@
         <div class="card_footer">
             <div class="card_icon_menu">
                 <div class="card-icon-menu-react">
-                    <i class="far fa-heart" />
-                    <img src="../assets/images/send.svg" alt="Send">
+                    <i class="far fa-heart" :style="{color: isLike === true ? 'red' : 'black' }" @click="handleLike" />
                 </div>
-                <i class="far fa-bookmark" />
+                <i class="far fa-bookmark" :style="{color: isSave === true ? '#58FAF4' : 'black' }" @click="handleSavePost" />
             </div>
             <div class="d-flex justify-content-between">
                 <h6 style="padding: 0 25px; cursor: pointer">
-                    <div v-if="item.likes.length > 0">
-                        {{ item.likes.length }}  likes
+                    <div v-if="likes.length > 0">
+                        {{ likes.length }}  likes
                     </div>
                 </h6>
                 <h6 style="padding: 0 25px; cursor: pointer">
@@ -62,7 +61,6 @@
         </div>
         <div v-if="comments.length > 0" class="comments">
             <div v-for="index in commentLength" :key="index" class="comment_display">
-                <!-- <div v-for="(comment, index) in item.comments" :key="index" class="comment_display"> -->
                 <div
                     v-if="index - 1 < comments.length"
                     class="comment_card mt-2"
@@ -166,7 +164,11 @@ export default {
         return {
             content: '',
             commentLength: 1,
-            comments: []
+            comments: [],
+            likes: [],
+            saves: [],
+            isLike: false,
+            isSave: false
         };
     },
     computed: {
@@ -175,6 +177,10 @@ export default {
     mounted() {
         this.comments = this.item.comments;
         this.comments = this.comments.reverse();
+        this.likes = this.item.likes;
+        this.isLike = !!(this.likes.find((item:any) => item._id === this.profile._id));
+        this.saves = [...this.profile.saved];
+        this.isSave = this.saves.includes(this.item._id);
     },
 
     methods: {
@@ -190,6 +196,62 @@ export default {
                 .finally(() => {
                     this.$nuxt.$loading.finish();
                 });
+        },
+        handleLike() {
+            if (this.isLike)
+                this.unlikePost();
+
+            else
+                this.likePost();
+        },
+        async likePost() {
+            this.isLike = true;
+            this.likes = this.likes.concat({ ...this.profile });
+            await this.$axios.$patch(`/api/v1/post/${this.item._id}/like`).catch(() => {
+                this.$notify.success({
+                    title: 'Error',
+                    message: 'Sorry, some error!'
+                });
+                this.isLike = false;
+                this.likes = this.likes.filter((item:any) => item._id !== this.profile._id);
+            });
+        },
+        async unlikePost() {
+            this.isLike = false;
+            this.likes = this.likes.filter((item:any) => item._id !== this.profile._id);
+            await this.$axios.$patch(`/api/v1/post/${this.item._id}/unlike`).catch(() => {
+                this.$notify.success({
+                    title: 'Error',
+                    message: 'Sorry, some error!'
+                });
+                this.isLike = true;
+                this.likes = this.likes.concat({ ...this.profile });
+            });
+        },
+        async savePost() {
+            this.isSave = true;
+            await this.$axios.$patch(`/api/v1/savePost/${this.item._id}`).catch(() => {
+                this.$notify.success({
+                    title: 'Error',
+                    message: 'Sorry, some error!'
+                });
+                this.isSave = false;
+            });
+        },
+        async unSavePost() {
+            this.isSave = false;
+            await this.$axios.$patch(`/api/v1/unSavePost/${this.item._id}`).catch(() => {
+                this.$notify.success({
+                    title: 'Error',
+                    message: 'Sorry, some error!'
+                });
+                this.isSave = true;
+            });
+        },
+        handleSavePost() {
+            if (this.isSave === false)
+                this.savePost();
+            else this.unSavePost();
         },
         seeMoreComment() {
             this.commentLength += 1;
