@@ -59,6 +59,22 @@
                 </h6>
             </div>
         </div>
+        <div class="card-footer comment_input">
+            <input
+                v-model="content"
+                type="text"
+                placeholder="Add your comments..."
+                value=""
+                style="
+                              filter: invert(1);
+                              color: white;
+                              background: rgba(0, 0, 0, 0.03);
+                            "
+            >
+            <button class="postBtn" @click="submitComment({postId: item._id, content, reply:null, postUserId: item.user._id })">
+                Post
+            </button>
+        </div>
         <div v-if="comments.length > 0" class="comments">
             <div v-for="index in commentLength" :key="index" class="comment_display" style="transform: rotate(180deg);">
                 <div
@@ -129,7 +145,7 @@
                 See more comments...
             </div>
         </div>
-        <div class="card-footer comment_input">
+        <!-- <div class="card-footer comment_input">
             <input
                 v-model="content"
                 type="text"
@@ -144,7 +160,7 @@
             <button class="postBtn" @click="submitComment({postId: item._id, content, reply:null, postUserId: item.user._id })">
                 Post
             </button>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -196,9 +212,11 @@ export default {
         });
 
         eventBus.$on('COMMENT_POST', (data:any) => {
-            this.comments.unshift(data);
-            if (this.commentLength !== 1)
-                this.commentLength++;
+            if (data.user._id !== this.profile._id) {
+                this.comments.unshift(data);
+                if (this.commentLength !== 1)
+                    this.commentLength++;
+            }
         });
     },
 
