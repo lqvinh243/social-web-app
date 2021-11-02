@@ -6,6 +6,7 @@
                 <div class="col-right">
                     <nuxt />
                     <ChangePasswordModal />
+                    <CallModal />
                 </div>
             </div>
         </div>
@@ -16,10 +17,12 @@
 import Vue from 'vue';
 import { mapActions } from 'vuex';
 import Menu from '~/components/Menu.vue';
+import CallModal from '~/components/modals/CallModal.vue';
 import ChangePasswordModal from '~/components/modals/ChangePasswordModal.vue';
 import { connectWS } from '~/utils/socket';
+
 export default Vue.extend({
-    components: { Menu, ChangePasswordModal },
+    components: { Menu, ChangePasswordModal, CallModal },
 
     data: () => ({
         drawer: null,

@@ -1,5 +1,8 @@
 <template>
     <div v-if="channel" class="w-100">
+        <el-button @click="handleCall">
+            Call
+        </el-button>
         <div ref="containerMessage" class="chat-area" @scroll="infiniteScroll">
             <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" :recipient="recipientInfo" />
         </div>
@@ -24,6 +27,7 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import ChatAreaItem from '~/components/chat/ChatAreaItem.vue';
+import eventBus from '~/plugins/event-bus';
 import { connectWS } from '~/utils/socket';
 export default {
     components: { ChatAreaItem },
@@ -176,6 +180,10 @@ export default {
 
                 await this.loadMessage(this.channelId);
             }
+        },
+
+        handleCall() {
+            eventBus.$emit('call_user');
         }
     }
 };
