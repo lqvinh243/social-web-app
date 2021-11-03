@@ -73,8 +73,6 @@ export default {
                     this.sender = val.recipients[1]._id;
                     this.recipient = val.recipients[0]._id;
                 }
-                console.log('change');
-
                 await this.getUser(this.recipient);
                 await this.loadMessage(this.channelId);
                 this.scrollBottom();
@@ -128,7 +126,6 @@ export default {
             const el = this.$refs.containerMessage;
             this.scrollHeight = el.scrollHeight;
             this.$nuxt.$loading.start();
-            console.log(this.page);
 
             const result = await this.$axios.$get(`/api/v1/message/${channelId}?page=${this.page}`);
             this.total = result.result;
@@ -183,7 +180,7 @@ export default {
         },
 
         handleCall() {
-            eventBus.$emit('call_user');
+            eventBus.$emit('call_user', this.recipient);
         }
     }
 };

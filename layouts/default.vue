@@ -15,11 +15,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import Menu from '~/components/Menu.vue';
 import CallModal from '~/components/modals/CallModal.vue';
 import ChangePasswordModal from '~/components/modals/ChangePasswordModal.vue';
 import { connectWS } from '~/utils/socket';
+if (typeof navigator !== 'undefined')
+    // eslint-disable-next-line no-var
+    var { getInstancePeer } = require('~/services/peer');
 
 export default Vue.extend({
     components: { Menu, ChangePasswordModal, CallModal },
@@ -33,10 +36,17 @@ export default Vue.extend({
     }),
 
     computed: {
-
+        ...mapGetters('auth', ['profile'])
     },
 
     async mounted() {
+        if (process.client) {
+            const peer = getInstancePeer(this.profile._id);
+            peer.on('open', (id:any) => {
+                console.log(id);
+            });
+        }
+
         const socket = connectWS(this.$config.wsUrl, '', this.$store.state.auth.accessToken);
         socket.on('connect', () => {
             console.log('Socket is connected!');

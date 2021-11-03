@@ -9,10 +9,10 @@
     >
         <el-row>
             <el-col :span="8">
-                <video id="localStream" style="width:200px" />
+                <video ref="localStream" style="width:200px" />
             </el-col>
             <el-col :span="16">
-                <video id="remoteStream" style="width:400px" />
+                <video ref="remoteStream" style="width:400px" />
             </el-col>
         </el-row>
 
@@ -24,43 +24,131 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import eventBus from '~/plugins/event-bus';
+import { connectWS } from '~/utils/socket';
+if (typeof navigator !== 'undefined')
+    // eslint-disable-next-line no-var
+    var { getInstancePeer } = require('~/services/peer');
 
 export default {
     middleware: ['authentication'],
     data() {
         return {
             dialogVisible: false,
-            video: null,
-            video1: null
+            socketCall: null,
+            calleId: null
         };
     },
     computed: {
         ...mapGetters('auth', ['profile'])
     },
     mounted() {
-        eventBus.$on('call_user', () => {
-            this.dialogVisible = true;
-            this.$nextTick(() => {
-                this.openStream().then((stream:any) => {
-                    this.playStream('localStream', stream);
+        this.socketCall = connectWS(this.$config.wsUrl, 'call', this.$store.state.auth.accessToken);
+        this.socketCall.on('connect', () => {
+            console.log('Socket call is connected!');
+        });
+        if (process.client) {
+            const peer = getInstancePeer(this.profile._id);
+            eventBus.$on('call_user', (id: string) => {
+                this.socketCall.emit('start_call', id);
+                this.socketCall.on('start_call', (data:any) => {
+                    if (data.code === 'Error') {
+                        this.$notify.error({
+                            title: 'Error',
+                            message: data.msg
+                        });
+                    }
+                    else {
+                        this.dialogVisible = true;
+                        this.calleId = id;
+                    }
+                });
+                this.$nextTick(() => {
+                    this.openStream().then((stream:any) => {
+                        this.playStream(this.$refs.localStream, stream);
+                        const call = peer.call(id, stream);
+                        call.on('stream', (remoteStream:any) => this.playStream(this.$refs.remoteStream, remoteStream));
+                    });
                 });
             });
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            peer.on('call', (call:any) => {
+                this.$confirm('You have new call?. Continue?', 'Warning', {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                }).then(() => {
+                    this.calleId = call.peer;
+                    this.socketCall.emit('accept_call');
+                    this.dialogVisible = true;
+                    this.openStream().then((stream:any) => {
+                        call.answer(stream);
+                        this.playStream(this.$refs.remoteStream, stream);
+                        call.on('stream', (remoteStream:any) => this.playStream(this.$refs.localStream, remoteStream));
+                    });
+                }).catch(() => {
+                    this.socketCall.emit('denied_call', (call.peer));
+                    this.$message({
+                        type: 'info',
+                        message: 'Delete canceled'
+                    });
+                });
+            });
+        }
+
+        this.socketCall.on('denied_call', () => {
+            this.handleEndCall();
+            this.$notify.error({
+                title: 'Error',
+                message: 'User not accept call!'
+            });
+        });
+
+        this.socketCall.on('cancel_call', () => {
+            this.calleId = null;
+            this.$message({
+                type: 'info',
+                message: 'User end call'
+            });
+            this.handleEndCall();
         });
     },
     methods: {
         async openStream() {
-            const config = { audio: true, video: true };
+            const config = { audio: false, video: true };
             return await navigator.mediaDevices.getUserMedia(config);
         },
         handleEndCall() {
-            this.video.srcObject = null;
+            if (this.calleId)
+                this.socketCall.emit('cancel_call', this.calleId);
+
             this.dialogVisible = false;
+            const stream = this.$refs.localStream.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+
+                tracks.forEach(function(track:any) {
+                    track.stop();
+                });
+
+                this.$refs.localStream.srcObject = null;
+            }
+
+            const stream1 = this.$refs.remoteStream.srcObject;
+            if (stream1) {
+                const tracks1 = stream1.getTracks();
+
+                tracks1.forEach(function(track:any) {
+                    track.stop();
+                });
+
+                this.$refs.remoteStream.srcObject = null;
+            }
         },
 
-        playStream(idVideo:any, stream:any) {
-            this.video = document.getElementById(idVideo) as any;
-            this.video.srcObject = stream;
-            this.video.play();
+        playStream(el:any, stream:any) {
+            el.srcObject = stream;
+            el.play();
         }
     }
 };

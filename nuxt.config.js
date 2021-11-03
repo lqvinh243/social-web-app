@@ -37,7 +37,8 @@ export default {
         { src: '~/plugins/vuetify' },
         { src: '~/plugins/vue-recapcha' },
         { src: '~/plugins/vue-owl-carousel', ssr: false },
-        { src: '~plugins/ckeditor', mode: 'client' },
+        { src: '~/plugins/ckeditor', mode: 'client' },
+        // { src: '~/plugins/peer', mode: 'client' }
     ],
 
     // Auto import components (https://go.nuxtjs.dev/config-components)
