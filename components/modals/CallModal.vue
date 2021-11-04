@@ -59,7 +59,6 @@ export default {
         });
         if (process.client) {
             this.socketCall.on('start_call', (data:any) => {
-                console.log(data);
                 if (data.code === 'Error') {
                     this.$notify.error({
                         title: 'Error',

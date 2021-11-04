@@ -59,7 +59,6 @@ export default {
     },
     mounted() {
         this.data = { ...this.user };
-        console.log(this.data);
     },
     methods: {
         ...mapActions('auth', ['updateProfile']),

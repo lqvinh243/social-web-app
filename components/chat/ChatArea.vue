@@ -174,8 +174,6 @@ export default {
             const el = this.$refs.containerMessage;
             if (el.scrollTop === 0 && this.isScrollLoad === false) {
                 this.page++;
-                console.log('scroll');
-
                 await this.loadMessage(this.channelId);
             }
         },

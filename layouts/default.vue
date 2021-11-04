@@ -40,12 +40,8 @@ export default Vue.extend({
     },
 
     async mounted() {
-        if (process.client) {
-            const peer = getInstancePeer(this.profile._id);
-            peer.on('open', (id:any) => {
-                console.log(id);
-            });
-        }
+        if (process.client)
+            getInstancePeer(this.profile._id);
 
         const socket = connectWS(this.$config.wsUrl, '', this.$store.state.auth.accessToken);
         socket.on('connect', () => {

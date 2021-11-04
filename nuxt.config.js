@@ -78,7 +78,8 @@ export default {
     },
     env: {
         agoliaApp: process.env.AGOLIA_APP,
-        agoliaApiKey: process.env.AGOLIA_API_KEY
+        agoliaApiKey: process.env.AGOLIA_API_KEY,
+        peerUrl: process.env.PEER_URL
     },
 
     privateRuntimeConfig: {
