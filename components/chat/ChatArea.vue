@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import ChatAreaItem from '~/components/chat/ChatAreaItem.vue';
 import eventBus from '~/plugins/event-bus';
 import { connectWS } from '~/utils/socket';
@@ -115,6 +115,7 @@ export default {
     },
 
     methods: {
+        ...mapActions('auth', ['updateUserCall']),
         scrollBottom() {
             this.$nextTick(() => {
                 const el = this.$refs.containerMessage;
@@ -181,6 +182,7 @@ export default {
 
         handleCall() {
             eventBus.$emit('call_user', this.recipient);
+            this.updateUserCall(this.recipient);
         }
     }
 };

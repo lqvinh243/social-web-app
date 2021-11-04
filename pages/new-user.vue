@@ -17,6 +17,7 @@ import UserSuggestItem from '~/components/UserSuggestItem.vue';
 
 export default {
     components: { UserSuggestItem },
+    layout: 'default',
     middleware: ['authentication'],
     data: () => ({
         items: [

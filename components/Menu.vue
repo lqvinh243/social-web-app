@@ -160,6 +160,7 @@ export default Vue.extend({
     methods: {
         ...mapActions('auth', [
             'clearAuthentication',
+            'updateVisibleChangePassword'
         ]),
         handleRedirect(path: string) {
             switch (path) {
@@ -174,7 +175,7 @@ export default Vue.extend({
                 this.$router.push(`/${path}`);
                 break;
             case 'change-password':
-                eventBus.$emit('OPEN_CHANGE_PASSWORD');
+                this.updateVisibleChangePassword(true);
                 break;
             }
         }

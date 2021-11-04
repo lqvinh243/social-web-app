@@ -10,6 +10,9 @@ export interface IAuthState {
     roleId: string | null;
     profile: IUser | null;
     usersOnline: string[];
+    visiableChangePassword: boolean;
+    visibleVideoCall: boolean;
+    userCallId: string | null;
 }
 
 export const state = (): IAuthState => ({
@@ -17,7 +20,10 @@ export const state = (): IAuthState => ({
     userId: null,
     roleId: null,
     profile: null,
-    usersOnline: []
+    usersOnline: [],
+    visiableChangePassword: false,
+    visibleVideoCall: false,
+    userCallId: null
 });
 
 export const getters: GetterTree<IAuthState, IRootState> = {
@@ -25,7 +31,10 @@ export const getters: GetterTree<IAuthState, IRootState> = {
     userId: state => state.userId,
     roleId: state => state.roleId,
     profile: state => state.profile,
-    usersOnline: state => state.usersOnline
+    usersOnline: state => state.usersOnline,
+    visiableChangePassword: state => state.visiableChangePassword,
+    visibleVideoCall: state => state.visibleVideoCall,
+    userCallId: state => state.userCallId
 };
 
 export const mutationType = {
@@ -36,7 +45,10 @@ export const mutationType = {
     AVATAR: 'avatar',
     LIST_ONLINE: 'list_online',
     USER_ONLINE: 'user_online',
-    USER_OFFLINE: 'user_offline'
+    USER_OFFLINE: 'user_offline',
+    UPDATE_VISIBLE_CHANGE_PASSWORD: 'update_visible_change_password',
+    UPDATE_VISIBLE_VIDEO_CALL: 'update_visible_video_call',
+    UPDATE_USER_CALL: 'update_user_call'
 };
 
 export const mutations: MutationTree<IAuthState> = {
@@ -65,6 +77,15 @@ export const mutations: MutationTree<IAuthState> = {
     },
     [mutationType.USER_OFFLINE]: (state, userId: string) => {
         state.usersOnline = state.usersOnline.filter(item => item !== userId);
+    },
+    [mutationType.UPDATE_VISIBLE_CHANGE_PASSWORD]: (state, isVisible: boolean) => {
+        state.visiableChangePassword = isVisible;
+    },
+    [mutationType.UPDATE_VISIBLE_VIDEO_CALL]: (state, isVisible: boolean) => {
+        state.visibleVideoCall = isVisible;
+    },
+    [mutationType.UPDATE_USER_CALL]: (state, userId: string | null) => {
+        state.userCallId = userId;
     }
 };
 
@@ -103,5 +124,17 @@ export const actions: ActionTree<IAuthState, IRootState> = {
 
     userOffline({ commit }, userId) {
         commit(mutationType.USER_OFFLINE, userId);
+    },
+
+    updateVisibleChangePassword({ commit }, isVisible: boolean) {
+        commit(mutationType.UPDATE_VISIBLE_CHANGE_PASSWORD, isVisible);
+    },
+
+    updateVisibleVideoCall({ commit }, isVisible: boolean) {
+        commit(mutationType.UPDATE_VISIBLE_VIDEO_CALL, isVisible);
+    },
+
+    updateUserCall({ commit }, userId: string | null) {
+        commit(mutationType.UPDATE_USER_CALL, userId);
     }
 };

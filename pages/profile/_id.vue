@@ -58,6 +58,7 @@
 <script lang="ts">
 
 export default {
+    layout: 'default',
     middleware: ['authentication'],
     data() {
         return {

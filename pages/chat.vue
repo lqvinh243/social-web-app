@@ -19,6 +19,7 @@ import ChatArea from '~/components/chat/ChatArea.vue';
 import ChatColumn from '~/components/chat/ChatColumn.vue';
 export default {
     components: { ChatArea, ChatColumn },
+    layout: 'default',
     middleware: ['authentication'],
     data() {
         return {

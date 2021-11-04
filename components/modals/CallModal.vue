@@ -22,8 +22,7 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex';
-import eventBus from '~/plugins/event-bus';
+import { mapActions, mapGetters } from 'vuex';
 import { connectWS } from '~/utils/socket';
 if (typeof navigator !== 'undefined')
     // eslint-disable-next-line no-var
@@ -35,11 +34,23 @@ export default {
         return {
             dialogVisible: false,
             socketCall: null,
-            calleId: null
+            calleId: null,
+            peer: null,
+            callSuccess: false,
+            messageConfirm: null
         };
     },
     computed: {
-        ...mapGetters('auth', ['profile'])
+        ...mapGetters('auth', ['profile', 'userCallId'])
+    },
+    watch: {
+        userCallId: {
+            handler(id:string | null) {
+                if (id)
+                    this.socketCall.emit('start_call', id);
+            },
+            deep: true
+        }
     },
     mounted() {
         this.socketCall = connectWS(this.$config.wsUrl, 'call', this.$store.state.auth.accessToken);
@@ -47,33 +58,32 @@ export default {
             console.log('Socket call is connected!');
         });
         if (process.client) {
-            const peer = getInstancePeer(this.profile._id);
-            eventBus.$on('call_user', (id: string) => {
-                this.socketCall.emit('start_call', id);
-                this.socketCall.on('start_call', (data:any) => {
-                    if (data.code === 'Error') {
-                        this.$notify.error({
-                            title: 'Error',
-                            message: data.msg
-                        });
-                    }
-                    else {
-                        this.dialogVisible = true;
-                        this.calleId = id;
-                    }
-                });
-                this.$nextTick(() => {
-                    this.openStream().then((stream:any) => {
-                        this.playStream(this.$refs.localStream, stream);
-                        const call = peer.call(id, stream);
-                        call.on('stream', (remoteStream:any) => this.playStream(this.$refs.remoteStream, remoteStream));
+            this.socketCall.on('start_call', (data:any) => {
+                console.log(data);
+                if (data.code === 'Error') {
+                    this.$notify.error({
+                        title: 'Error',
+                        message: data.msg
                     });
-                });
+                    this.updateUserCall(null);
+                }
+                else {
+                    this.dialogVisible = true;
+                    this.calleId = this.userCallId;
+                    this.$nextTick(() => {
+                        this.openStream().then((stream:any) => {
+                            this.playStream(this.$refs.localStream, stream);
+                            const call = this.peer.call(this.userCallId, stream);
+                            call.on('stream', (remoteStream:any) => this.playStream(this.$refs.remoteStream, remoteStream));
+                        });
+                    });
+                }
             });
 
+            this.peer = getInstancePeer(this.profile._id);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            peer.on('call', (call:any) => {
-                this.$confirm('You have new call?. Continue?', 'Warning', {
+            this.peer.on('call', (call:any) => {
+                this.messageConfirm = this.$confirm('You have new call?. Continue?', 'Warning', {
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel',
                     type: 'warning'
@@ -105,6 +115,7 @@ export default {
         });
 
         this.socketCall.on('cancel_call', () => {
+            this.$message.close();
             this.calleId = null;
             this.$message({
                 type: 'info',
@@ -114,6 +125,7 @@ export default {
         });
     },
     methods: {
+        ...mapActions('auth', ['updateUserCall']),
         async openStream() {
             const config = { audio: false, video: true };
             return await navigator.mediaDevices.getUserMedia(config);
@@ -123,6 +135,7 @@ export default {
                 this.socketCall.emit('cancel_call', this.calleId);
 
             this.dialogVisible = false;
+            this.updateUserCall(null);
             const stream = this.$refs.localStream.srcObject;
             if (stream) {
                 const tracks = stream.getTracks();

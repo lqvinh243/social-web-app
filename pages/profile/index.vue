@@ -77,6 +77,7 @@ import UploadAvatarModal from '~/components/modals/UploadAvatarModal.vue';
 
 export default {
     components: { ChangeProfileModal, UploadAvatarModal, ListUserModal },
+    layout: 'default',
     middleware: ['authentication'],
     data() {
         return {

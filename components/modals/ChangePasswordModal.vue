@@ -1,12 +1,13 @@
 <template>
     <el-dialog
         title="Cập nhật mật khẩu"
-        :visible.sync="dialogVisible"
+        :visible.sync="visiableChangePassword"
         width="30%"
         :show-close="false"
         :close-on-click-modal="false"
         class="text-center"
         :close-on-press-escape="false"
+        :destroy-on-close="false"
     >
         <el-form
             ref="passwordForm"
@@ -37,7 +38,8 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import eventBus from '~/plugins/event-bus';
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
     middleware: ['authentication'],
     data() {
@@ -77,7 +79,6 @@ export default {
             }
         };
         return {
-            dialogVisible: false,
             passwordForm: {
                 oldPassword: '',
                 password: '',
@@ -96,15 +97,19 @@ export default {
             },
         };
     },
+    computed: {
+        ...mapGetters('auth', ['visiableChangePassword'])
+    },
     mounted() {
-        eventBus.$on('OPEN_CHANGE_PASSWORD', () => {
-            this.dialogVisible = true;
-        });
+    },
+    destroyed() {
+
     },
     methods: {
+        ...mapActions('auth', ['updateVisibleChangePassword']),
         resetForm(formName: string) {
             this.$refs[formName].resetFields();
-            this.dialogVisible = false;
+            this.updateVisibleChangePassword(false);
         },
         submitForm(formName: string) {
             this.$refs[formName].validate(async (valid:boolean) => {
