@@ -107,7 +107,7 @@ export default {
 
             this.messages.push(data);
             this.$nextTick(() => {
-                if (isScroll)
+                if (isScroll && this.channelId)
                     this.scrollBottom();
             }
             );
