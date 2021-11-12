@@ -1,6 +1,6 @@
 <template>
-    <div class="theme-default">
-        <div class="main-content">
+    <div class="App">
+        <div class="main">
             <div data-app>
                 <Menu />
                 <div class="col-right">

@@ -1,6 +1,6 @@
 <template>
-    <div class=" container">
-        <div>
+    <div class="home row mx-0">
+        <div class="col-md-8">
             <div class="status my-3 d-flex">
                 <img
                     :src="getAvatar"

@@ -33,9 +33,9 @@
             </div>
         </div>
         <div class="card_body">
-            <div class="demo-image__preview text-center">
+            <div class="carousel-inner">
                 <el-image
-                    style="width: 400px; height: 400px;"
+                    style="d-block w-100"
                     :src="item.images[0]"
                     :preview-src-list="item.images"
                 />
