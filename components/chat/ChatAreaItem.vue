@@ -1,15 +1,28 @@
 <template>
-    <div v-if="isMyMessage" class="container darker">
-        <p>You</p>
-        <p>{{ item.text || '...' }}</p>
+    <div v-if="isMyMessage" class="chat_row you_message">
+        <div class="chat_title">
+            <span>You</span>
+        </div>
+        <div class="you_content">
+            <div class="chat_text" style="filter: invert(0)">
+                {{ item.text || '...' }}
+            </div>
+        </div>
         <span class="time-left" style="font-size:10px">{{ displayTime }}</span>
         <p v-if="isSend === false" style="font-size:10px;color:red">
             Message cannot send
         </p>
     </div>
-    <div v-else class="container">
-        <p>{{ displayNameRecipient }}</p>
-        <p>{{ item.text || '...' }}</p>
+
+    <div v-else class="chat_row other_message">
+        <div class="chat_title">
+            <span>{{ displayNameRecipient }}</span>
+        </div>
+        <div class="you_content">
+            <div class="chat_text" style="filter: invert(0)">
+                {{ item.text || '...' }}
+            </div>
+        </div>
         <span class="time-right" style="font-size:10px">{{ displayTime }}</span>
     </div>
 </template>

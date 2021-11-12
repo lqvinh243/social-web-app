@@ -1,16 +1,14 @@
 <template>
-    <div class="h-100 w-75 mx-auto mt-4">
-        <el-row>
+    <div class="message d-flex">
+        <!-- <el-row>
             <h1>Your chat message</h1>
-        </el-row>
-        <el-row :gutter="20" class="w-100 h-100">
-            <el-col :span="8">
-                <chat-column @channel="channelSelect" />
-            </el-col>
-            <el-col :span="12">
-                <chat-area :channel="channel" />
-            </el-col>
-        </el-row>
+        </el-row> -->
+        <div class="col-md-4 border-right px-0 left_mess">
+            <chat-column @channel="channelSelect" />
+        </div>
+        <div class="col-md-8 px-0">
+            <chat-area :channel="channel" />
+        </div>
     </div>
 </template>
 

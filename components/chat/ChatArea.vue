@@ -1,22 +1,27 @@
 <template>
-    <div v-if="channel" class="w-100">
+    <div v-if="channel">
         <el-button @click="handleCall">
             Call
         </el-button>
-        <div ref="containerMessage" class="chat-area" @scroll="infiniteScroll">
-            <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" :recipient="recipientInfo" />
+        <div ref="containerMessage" class="chat_container" style="height: calc(100% - 180px)" @scroll="infiniteScroll">
+            <div class="chat_display">
+                <ChatAreaItem v-for="item in messages" :key="item._id" :item="item" :recipient="recipientInfo" />
+            </div>
         </div>
         <div>
-            <el-row class="w-100 h-100" :gutter="8">
-                <el-col :span="17">
-                    <el-input v-model="input" :disabled="!channel" placeholder="Enter message ..." />
-                </el-col>
-                <el-col :span="2">
-                    <el-button type="primary" :disabled="!input.length" icon="el-icon-s-promotion" @click="handleSendMessage">
-                        Send message
-                    </el-button>
-                </el-col>
-            </el-row>
+            <div class="chat_input" :gutter="8">
+                <input
+                    v-model="input"
+                    :disabled="!channel"
+                    placeholder="Enter message ..."
+                    style="
+                            filter: invert(0);"
+                >
+
+                <el-button type="primary" :disabled="!input.length" icon="el-icon-s-promotion" @click="handleSendMessage">
+                    Send message
+                </el-button>
+            </div>
         </div>
     </div>
     <div v-else class="chat-area">

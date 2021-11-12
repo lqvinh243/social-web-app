@@ -1,18 +1,13 @@
 <template>
-    <div class="w-100">
+    <div class="message_chat_list">
         <v-list v-if="conversations.length" dense class="chat-column">
-            <v-list-item-group
-                v-model="selectedItem"
-                color="primary"
+            <v-list-item
+                v-for="(item, i) in conversations"
+                :key="i"
+                @click="handleSelectChannel(item)"
             >
-                <v-list-item
-                    v-for="(item, i) in conversations"
-                    :key="i"
-                    @click="handleSelectChannel(item)"
-                >
-                    <ColumnItem :item="item" />
-                </v-list-item>
-            </v-list-item-group>
+                <ColumnItem :item="item" />
+            </v-list-item>
         </v-list>
         <el-empty v-else description="No channel available" class="chat-column" />
     </div>

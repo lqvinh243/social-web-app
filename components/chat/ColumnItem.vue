@@ -1,16 +1,18 @@
 <template>
-    <div>
-        <div class="d-flex">
-            <v-list-item-avatar>
-                <v-img :src="displayAvatar" />
-            </v-list-item-avatar>
-            <div :class="displayOnline" />
-        </div>
+    <div class="message_user active">
+        <div class="d-flex p-2 align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center">
+                <div class="big-avatar">
+                    <v-img :src="displayAvatar" />
+                </div>
+                <div :class="displayOnline" />
 
-        <v-list-item-content>
-            <v-list-item-title v-html="displayName" />
-            <v-list-item-subtitle v-html="item.text" />
-        </v-list-item-content>
+                <div class="ml-1" style="transform: 'translateY(-2px)'">
+                    <span class="d-block" v-html="displayName" />
+                    <small style="opacity: 0,7" v-html="item.text" />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts">
