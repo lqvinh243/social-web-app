@@ -304,4 +304,9 @@ export default {
     }
 };
 </script>
+<style lang="scss" scoped>
+.comment_input{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+</style>
 

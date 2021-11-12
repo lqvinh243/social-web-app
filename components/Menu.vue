@@ -14,8 +14,16 @@
                 </h1>
             </div>
 
-            <form class="search_form">
-                <input id="search" type="text" name="search" value="" title="Enter to Search">
+            <div class="search_form">
+                <input
+                    id="search"
+                    v-model="inputSearch"
+                    type="text"
+                    name="search"
+                    value=""
+                    title="Enter to Search"
+                    @keyup.enter="clicktoSearch()"
+                >
                 <div class="search_icon" style="opacity: 0.3">
                     <span class="material-icons">search</span>
                     <span>Enter to Search</span>
@@ -23,10 +31,7 @@
                 <div class="close_search" style="opacity: 1">
                     ×
                 </div>
-                <button type="submit" style="display: none">
-                    Search
-                </button>
-            </form>
+            </div>
 
             <div class="menu">
                 <ul class="navbar-nav flex-row">
@@ -124,6 +129,7 @@ export default Vue.extend({
         loading: false,
         search: null,
         select: null,
+        inputSearch: '',
     }),
     computed: {
         ...mapGetters('auth', ['profile']),
@@ -178,6 +184,10 @@ export default Vue.extend({
                 this.updateVisibleChangePassword(true);
                 break;
             }
+        },
+        clicktoSearch() {
+            if (this.inputSearch.length > 0)
+                this.$router.push({ path: `/search-user/${this.inputSearch}` });
         }
     }
 });
