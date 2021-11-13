@@ -1,6 +1,6 @@
 <template>
-    <div class=" container row">
-        <div class="col-md-10">
+    <div class="home row mx-0">
+        <div class="col-md-8">
             <div class="status my-3 d-flex">
                 <img
                     :src="getAvatar"
@@ -16,54 +16,6 @@
             </div>
             <div v-if="!postList.length" class="text-center">
                 <el-empty :image-size="200" description="No post available" />
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div
-                class="suggestion"
-                style="margin-top: 130px;position: fixed;"
-            >
-                <div class="mt-4">
-                    <div class="d-flex justify-content-between align-items-center my-2">
-                        <h5 class="text-danger">
-                            New User
-                        </h5>
-                    </div>
-                    <div class="suggestions">
-                        <div
-                            v-for="(item,index) in newUser"
-                            :key="index"
-                            class="
-                      d-flex
-                      p-2
-                      align-items-center
-                      justify-content-between
-                      w-100
-                    "
-                            style="border-bottom: 1px solid #3333;"
-                        >
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <img
-                                        :src="item.avatar"
-                                        class="big-avatar"
-                                    >
-                                    <div class="ml-3 mr-3" style="transform: translateY(-2px)">
-                                        <nuxt-link :to="`/profile/${item._id}`">
-                                            <span class="d-block">{{ item.fullname }}</span>
-                                        </nuxt-link>
-                                        <small style="opacity: 0.7">
-                                            <div style="filter: invert(0)">
-                                                Suggested for you
-                                            </div>
-                                            <div />
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -85,8 +37,8 @@ export default Vue.extend({
     data: () => ({
         postList: [],
         content: '',
-        dialogVisiblePost: false,
-        newUser: [],
+        dialogVisiblePost: false
+
     }),
     computed: {
         ...mapGetters('auth', ['profile']),
@@ -142,17 +94,12 @@ export default Vue.extend({
     methods: {
         init() {
             this.$nuxt.$loading.start();
-            Promise.all([
-                postsService.getPosts(),
-                this.$axios.$get('/api/v1/suggestionsUser')
-            ])
+            postsService.getPosts()
                 .then(res => {
-                    this.postList = res[0].posts;
-                    this.newUser = res[1].users.slice(0, 5);
+                    this.postList = res.posts;
                 })
                 .catch(() => {
                     this.postList = [];
-                    this.newUser = [];
                 })
                 .finally(() => {
                     this.$nuxt.$loading.finish();
@@ -163,7 +110,7 @@ export default Vue.extend({
         },
         closeDialogPost() {
             this.dialogVisiblePost = false;
-        },
+        }
     }
 });
 </script>
