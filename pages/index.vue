@@ -1,6 +1,6 @@
 <template>
     <div class=" container row">
-        <div class="col-md-10">
+        <div class="col-md-9">
             <div class="status my-3 d-flex">
                 <img
                     :src="getAvatar"
@@ -18,10 +18,10 @@
                 <el-empty :image-size="200" description="No post available" />
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div
                 class="suggestion"
-                style="margin-top: 130px;position: fixed;"
+                style="margin-top: 0px;position: fixed;"
             >
                 <div class="mt-4">
                     <div class="d-flex justify-content-between align-items-center my-2">
